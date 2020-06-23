@@ -1,0 +1,108 @@
+\documentclass[bibtotoc,liststotoc,BCOR5mm,DIV12]{scrbook}
+
+% use this declaration to set specific page margins
+%\usepackage[a4paper , lmargin = {2.7cm} , rmargin = {2.9cm} , tmargin = {2.7cm} , bmargin = {4.6cm} ]{geometry}
+\usepackage[a4paper]{geometry}
+\usepackage{pythonhighlight}
+\usepackage[ngerman, english]{babel}
+%\usepackage{bibgerm}       		% german references
+\usepackage[latin1]{inputenc} % german characters
+\usepackage{graphicx} 				% it's recommended to use PDF images but you can use JPG or PNG as well
+\usepackage{url}           		% format URLs
+\usepackage{hyperref} 				% create hyperlinks
+\usepackage{listings, color}	% for source code
+\usepackage{subfig}						% two figures next to each other (example: figure 3a), figure 3b)
+\usepackage{scrpage2}					% header and footer line
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% MY OWN STUFF %%%%%%%%
+\newcommand{\lang}{\begin{picture}(5,7)
+\put(1.1,2.5){\rotatebox{45}{\line(1,0){6.0}}}
+\put(1.1,2.5){\rotatebox{315}{\line(1,0){6.0}}}
+\end{picture}}
+\newcommand{\rang}{\begin{picture}(5,7)
+\put(.1,2.5){\rotatebox{135}{\line(1,0){6.0}}}
+\put(.1,2.5){\rotatebox{225}{\line(1,0){6.0}}}
+\end{picture}}
+\usepackage{lscape}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{wrapfig}
+\usepackage{caption}
+%\usepackage{subcaption}
+\usepackage{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{float}
+
+% header and footer line - no header & footer line on pages where a new chapter starts
+\pagestyle{scrheadings}
+\ohead{Design and Implementation of X}
+\ihead{Your Name}
+\ofoot[]{\thepage}
+\ifoot{Diploma Thesis, TU Berlin, Fachgebiet AV, 2009}
+
+% set path where images are stored
+\graphicspath{{./img/}}
+
+\input{./misc/hyphenation} 					% use this file to set explicit hyphenations (doesn't seem to work correctly)
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+% ---------------------------------------------------------------
+\frontmatter
+    \include{./misc/titlepage}
+   	\thispagestyle{empty}
+    \cleardoublepage
+    
+    \include{./misc/self-assertion} 
+    \thispagestyle{empty}
+    \cleardoublepage
+    
+    
+    \include{./misc/abstract}
+    \thispagestyle{empty}
+    \cleardoublepage
+    
+    \include{./misc/abstract_de}
+    \thispagestyle{empty}
+    
+    
+    \tableofcontents
+    \thispagestyle{empty}
+    
+    \listoffigures
+    \thispagestyle{empty}
+    
+    \listoftables
+    \thispagestyle{empty}
+    
+% --------------------------------------------------------------
+
+\mainmatter % comment single chapters for faster compilation
+
+    \input{./chapters/1-introduction}
+    \input{./chapters/2-background}
+    \input{./chapters/3-concept}
+    \input{./chapters/4-results}
+    \input{./chapters/5-related_work}
+    \input{./chapters/6-conclusion}
+
+% ---------------------------------------------------------------
+\backmatter % no page numbering from here
+    \input{./misc/acronyms}
+		
+		% if you want to provide a glossary with explanations of important terms put it in here
+
+    \bibliographystyle{ieeetr}
+    \bibliography{./bib/references}
+    
+    \input{./misc/annex}
+
+\end{document}
