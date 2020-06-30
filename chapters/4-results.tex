@@ -1,8 +1,20 @@
 \chapter{Results\label{cha:results}}
 
-In the following, the results are presented
+In the following chapter, the achieved results of the concept are presented. The described approaches are evaluated with regards to the common precision, recall, and F1-Score. Different hyperparameter setups are being discussed and are visualised in graphs. In particular, the baseline approach as described in \ref{glove-approach}, Bert and GPT-2 as described in \ref{transformer-approach} are compared, showing, which vectorisation method yields the best results. Additionally, the regression-based method as described in \ref{sec:regression} and the multi-classification method as described in \ref{sec:classification} are compared, showing advantages or disadvantages among each other.
 
-\section{TODO}
+
+
+
+
+\section{Experimental Setup}
+
+
+
+
+
+
+
+\section{Evaluation}
 \subsection{String cleansing}
 String cleansing, as described in \ref{sec:string_cleansing}, drastically improves distinguishability between templates in the used dataset, as depicted in figure \ref{fig:cos_distance_before_cleansing} and figure \ref{fig:cos_distance_after_cleansing} - the templates corresponding to the indices can be found in table \ref{tab:templates_before_cleansing} and table \ref{tab:templates_after_cleansing}, respectively.
 
@@ -30,7 +42,7 @@ Index & Template \\
 5 & $\lang*\rang$ Took $\lang*\rang$.$\lang*\rang$ seconds to build instance.\\
 6 & $\lang*\rang$ Terminating instance\\
 7 & $\lang*\rang$ Deleting instance files $\lang*\rang$\\
-8 & $\lang*\rang$ Deletion of $\lang*\rang$complete\\
+8 & $\lang*\rang$ Deletion of $\lang*\rang$ complete\\
 9 & $\lang*\rang$ Took $\lang*\rang$.$\lang*\rang$ seconds to deallocate network for instance.\\
 10 & $\lang*\rang$ Attempting claim: memory $\lang*\rang$ MB, disk $\lang*\rang$ GB, vcpus $\lang*\rang$ CPU\\
 11 & $\lang*\rang$ Total memory: $\lang*\rang$ MB, used: $\lang*\rang$.$\lang*\rang$ MB\\
@@ -102,4 +114,6 @@ As described in \ref{sec:finetuning}, finetuning can potentially help to produce
 
 
 \subsection{Regression}
+
+\section{Discussion of Results}
 %TODO box plots of loss values in 

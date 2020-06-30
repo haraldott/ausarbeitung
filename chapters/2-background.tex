@@ -29,6 +29,12 @@ Making sure that these large numbers of services and virtual machines are operat
 
 \section{Deep Learning \label{sec:deep-learning}}
 \subsection{Neural Networks \label{sec:neural-networks}}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=15cm]{neural_network.png}\\
+  \caption{A neural network \cite{hallmachinelearning}.}
+  \label{fig:neural_network}
+\end{figure}
 Neural networks are self-learning systems that constitute a subcategory of machine learning. By analysing training examples, it learns to compute a functional relationship between an input and an output \cite{sibi2013analysis}. Figure \ref{fig:neural_network} is an illustration of a classical feed-forward neural network. It consist of \textit{neurons} and \textit{weights} connecting the neurons. There are three types of neurons: Each input value maps to an \textit{input} neuron depicted as $x_n$. \textit{Hidden} neurons, depicted as $z_i$ are predictors created by mathematical functions and the \textit{output} neurons, depicted as $y_k$ gather given predictions and compute the output \cite{hallmachinelearning}. Given data pairs $(x_1, t_1), ..., (x_N, t_N)$ with $x_n \in \mathbb{R}^D$ being input data, mapping to $D$ input neurons, and $t_n \in \mathbb{R}^K$ being target data. Each component $x_n$ is fed to one input neuron. If $L$ is the number of layers, then there are $L-1$ hidden layers. The network's latent variables of the hidden neurons are denoted by $z_m^{(l)}$. When data is being forwarded through the network, with the goal of obtaining a prediction from the network, the following formulas are relevant and describe every step through the network. The result of a complete forward propagation is denoted by activation \ref{eq:activation}:
 
 \begin{equation}\label{eq:activation}
@@ -70,6 +76,9 @@ The complexity of neural networks can be increased by adding more neurons and ad
 Through the surge of available cheap computing power, deep learning models with high numbers of layers of neurons can be trained on large amounts of data. Also, the concept of the traditional neural network is constantly being 
 \end{comment}
 
+
+
+\subsection{LSTM networks \label{sec:lstm}}
 \begin{figure}[h]
   \centering
   \includegraphics[width=10cm]{LSTM.png}\\
@@ -77,21 +86,7 @@ Through the surge of available cheap computing power, deep learning models with 
   \label{fig:lstm_blocks}
 \end{figure}
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=10cm]{Bi-LSTM} \\
-  \caption{LSTM block \cite{graves2013speech}}
-  \label{fig:bi-lstm}
-\end{figure}
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=15cm]{neural_network.png}\\
-  \caption{A neural network \cite{hallmachinelearning}}
-  \label{fig:neural_network}
-\end{figure}
-
-\subsection{LSTM networks \label{sec:lstm}}
 Recurrent neural networks (RNN) with Long Short-Term Memory (LSTM) are a widely-used effective model to tackle learning problems on sequential data. Being a general model, they do not have be to be adapted to a specific problem like earlier methods, thus allowing them to produce state-of-the-art results for problems like language modeling \cite{peters2018deep}, anomaly detection \cite{du2017deeplog} amongst others.
 
 The core of the LSTM architecture is memory cell which maintains its state over time, in combination with gating units, which control the information flow \cite{greff2016lstm}, allowing it to remove or add information. The traditional LSTM architecture was first described by \cite{graves2005framewise}. The schematic structure of LSTM blocks is depicted in figure \ref{fig:lstm_blocks}. 
@@ -151,6 +146,12 @@ h_t = o_t \cdot \tanh(C_t)
 
 
 \subsection{Bidirectional LSTM networks \label{sec:bi-lstm}}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=10cm]{Bi-LSTM} \\
+  \caption{Bi-directional LSTM \cite{graves2013speech}.}
+  \label{fig:bi-lstm}
+\end{figure}
 In a sequence prediction task, in which one has access to both past and future input features for a given point in time, a bidirectional LSTM network as depicted in \ref{fig:bi-lstm} can be applied as proposed by Graves et al. \cite{graves2013speech}. In this way, it is possible to make us of past features via the forward state and future features via the backward states. Forward and backward passes are executes similarly to 
 
 

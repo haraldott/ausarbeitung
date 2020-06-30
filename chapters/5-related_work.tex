@@ -19,15 +19,71 @@ Even though the model can be adjusted after the training phase on a particular d
 \end{figure}
 
 
-\subsection{LogAnomaly: Unsupervised Detection of Sequential and Quantitative Anomalies in Unstructured Logs}
-LogAnomaly, the approach proposed by Meng et al. \cite{meng2019loganomaly} models a log stream as a natural language sequence. Log event sequences are first parsed into template sequences. These sequences are then transformed into embedding sequences using a novel word representation method, template2Vec.
+\subsection{LogAnomaly: Unsupervised Detection of Sequential and Quantitative Anomalies in Unstructured Logs \label{sec:loganomaly}}
+\textit{LogAnomaly}, the approach proposed by Meng et al. \cite{meng2019loganomaly} models a log stream as a natural language sequence. Log event sequences are first parsed into template sequences using FT-Tree. These sequences are then transformed into embedding sequences using a novel word representation method, template2Vec, which is inspired by word2Vec \cite{mikolov2013distributed}. Figure \ref{fig:template2vec} shows the steps included for template2Vec in the offline learning stage: (1) shows the inclusion of common synonyms and antonyms in the English language extracted from WordNet \cite{miller1995wordnet}. Additionally, log-data-specific synonyms and antonyms can be added. In the second (2) step, dLCE \cite{nguyen2016integrating} is used as an embedding model, to generate word vectors that represent the words in templates, which are then transformed (3) into template vectors \cite{meng2019loganomaly}.
+
+After log the sequences of log events $S=(s_1, s_2,...,s_m)$ have been transformed into template vector sequences $V=(v_{s_1}, v_{s_2},...,v_{s_m})$, they apply an Attention-based Bi-LSTM to learn sequences of normal logs. The sequence for detection is a sliding window of the $w$ most recent template vectors, meaning that for a template vector sequence $V_j = v_{(s_j)}, v_{(s_{j+1})}, ..., v_{(s_{j+w-1})}$, the LSTM learns to predict the template vector $v_{j+w}$. Additionally to sequential patterns, LogAnomaly considers quantitative patterns in sequences of templates. For example, opening files should also be closed, so the number of logs indicating that a file was opened should be equal to the number of logs indicating that a file was closed. If a log would break a certain invariant, it can be assumed that an anomaly has occurred during execution. For log messages $s_i \in S_j$, with $S_j$ being a subsequence of $S$, the count vector of the log sequence $s_{i-w+1},s_{i-w+2},...,s_i$ is calculated, denoted as $C_i = (c_i(v_1), c_i(v_2), ..., c_i(v_n))$, with $c_i(v_k)$ being the number of occurrences of $v_k$ in the template vector sequence $v_{i-w+1},s_{i-w+2},...,v_i$. $C_j$, $C_{j+1}, ..., C_{j+w-1}$ are then inputs for the LSTM. This process is laid out in figure \ref{fig:loganomaly} \cite{meng2019loganomaly}.
+
+In order to deal with new log templates in an online fashion, if an arriving log cannot be matches to an existing template, FT-Tree is utilised to extract a template from the new log and its template vector is calculated. Subsequently, the template will be matched on an existing one, based on the similarity among template vectors \cite{meng2019loganomaly}.
+
+For verification of the model, the authors employ a manually labeled BGL dataset containing around 4.7 million logs, and a HDFS dataset with around 11 million logs, both with manual labels on anomalous logs or blocks of logs. For the BGL dataset they achieve a precision of 0.97, recall of 0.94 and F1-score of 0.96. For the HDFS dataset, they achieve a precision of 0.96, recall of 0.94 and F1-score of 0.95 \cite{meng2019loganomaly}.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=15cm]{LogAnomaly.png}\\
-  \caption{DeepLog model overview \cite{graves2013speech}}
-  \label{fig:deeplog}
+  \includegraphics[width=11cm]{LogAnomaly.png}\\
+  \caption{LogAnomaly model overview \cite{meng2019loganomaly}.}
+  \label{fig:loganomaly}
 \end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=10cm]{templat2vec.png}\\
+  \caption{Example of Template2vec \cite{meng2019loganomaly}.}
+  \label{fig:template2vec}
+\end{figure}
+
+
+\subsection{Robust Log-Based Anomaly Detection on Unstable Log Data\label{sec:logrobust}}
+Zhang et al. proposed \textit{LogRobust} \cite{zhang2019robust}, emphasising the necessity of anomaly detection on log data being sufficiently robust to the unstable nature of log data which is twofold: They are \textit{evolving}, meaning that frequently modifying source code naturally leads to logging statements getting altered. Also during collection, retrieval and pre-processing of log data, \textit{processing noise} is introduced into the original log data. For example, in large-scale systems, many logs are produced by separate distributed components, potentially leading to missing, duplicated or disordered logs due to network errors or limited system throughput.
+
+In order to capture the semantics of log events, LogRobust treats sequences of log events like sequences of natural language sentences, exactly like in \ref{sec:loganomaly}. After adopting Drain to parse log data and extract log templates from it, they apply FastText \cite{joulin2016fasttext} in order to replace words with corresponding vectors with dimension $d=300$, thus transforming a log-event sentence $S$ into a word vector list $L = (v_1,v_2,...,v_N)$, where $v_i \in \mathbb{R}^d$ and $N$ being the number of tokens in a log-event sentence. Next, all $N$ word vectors that represent a log event are aggregated into a fixed-dimension vector. For this purpose, TF-IDF is applied to measure the importance of words in sentences. For example, if a word appears frequently in a log event, it means that this word is potentially highly representative for this log event, thus increasing its \textit{Term Frequency} (TF) value. On the contrary, if a word appears in many log events, it diminishes the distinguishability of log events, leading to a low \textit{Inverse Document Frequency} (IDF) value. Then, for each word, its TF-IDF weight is calculated by TF $\cdot$ IDF. Finally, the template vector $V \in \mathbb{R}^d$ is obtained by summing up the weighted word vectors.
+
+The log sequences are then split into subsequences and then used as input for an Attention-based Bi-LSTM. Hidden states at time step $t$ of the forward ($f$) and backward ($b$) pass are concatenated as $h_t =$ concat$(h_t^f, h_t^b)$. Log data noise can be reduced with the help of the attention layer, which can automatically learn the importance $\alpha_t$ of a log event, which can be computed by using the weight $W_t^\alpha$ of the attention layer at time step $t$ as follows: $\alpha_t = \tanh(W^\alpha_t \cdot h_t)$. The sum of all hidden states produces the prediction output: $pred = $ softmax $(W \cdot (\sum_{t=0}^{t=T} \alpha_t \cdot h_t))$.
+
+For evaluation, the authors use a HDFS dataset \cite{xu2009detecting} which contains around 24 million log messages with about 2.9\% labelled anomalies, commonly used for benchmarking. They simulate processing noise by applying various small changes to the order of log sequences (unstable seq.) and the evolution of log events by randomly removing or adding words from log events (unstable event). The resulting datasets can be seen in \ref{tab:manipulated_hdfs_dataset}. For an injection ratio of 5\% on \textit{NewTesting1}, LogRobust has a precision of 1.00, recall of 0.91 and an F1-Score of 0.95. Increasing the injection ratio in 5\% steps decreases the F1-Score by roughly 2 percentage points, while the baseline methods degrade more. The results are similar on \textit{NewTesting2}. On the unmodified HDFS dataset, precision is 0.98, recall 1.00 and F1-Score 0.99.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=10cm]{LogRobust.png}\\
+  \caption{Overview of LogRobust \cite{zhang2019robust}.}
+  \label{fig:template2vec}
+\end{figure}
+
+\begin{table}[ht]
+\centering
+\begin{small}
+\begin{tabular}{ l c c c c c} 
+\toprule
+Set & Unstable event & Unstable seq. & Normal & Anomaly & Total \\
+\midrule
+Training & No & No & 6,000 & 6,000 & 12,000 \\
+NewTesting1 & Yes & No & 50,000 & 1,000 & 51,000 \\
+NewTesting2 & No & Yes & 50,000 & 1,000 & 51,000 \\
+
+\bottomrule
+\end{tabular}
+\caption{Manipulated HDFS dataset}
+\label{tab:manipulated_hdfs_dataset}
+\end{small}
+\end{table}
+
+
+
+
+
+
+
+
 
 There has been a large amount of research and development of new approaches for anomaly detection in logs. %TODO alle Quellen einfuegen.
 Approaches can be characterised by the following categories: supervised learning models, unsupervised learning models, statistical models, classical machine learning models and finally deep learning models.
