@@ -8,6 +8,10 @@ In the following chapter, the achieved results of the concept are presented. The
 
 \section{Experimental Setup}
 
+\subsection{Anomaly Detection on one Dataset}
+In order to assess the quality of anomaly detection experiments on one dataset, log alterations, as described in \ref{sec:logs_alteration} are injected with controllable 
+
+\subsection{Transfer Learning}
 
 
 
@@ -98,9 +102,9 @@ Index & Template \\
 \subsection{Finetuning}
 As described in \ref{sec:finetuning}, finetuning can potentially help to produce word embeddings that are more adequate for solving a certain task, it is thus desirable to produce word embeddings that help solving the task of anomaly detection better. As described in \ref{sec:word_vectorization}, a high cosine distance between semantically different templates is required. The dataset that consists of the templates in table \ref{tab:templates_after_cleansing} has been chosen for finetuning. Since the pre-trained language models at hand (namely \textit{bert-base-uncased} and \textit{gpt2}) have been trained on a large corpus, finetuning would also need to be executed on a sufficiently large corpus. Since this is not the case, the results of finetuning for a maximum of four epochs, as suggested by the Bert authors \cite{devlin2018bert}, does not yield the desired results. As it can be seen in figure \ref{fig:cos_distance_finetuning}, it was not possible to increase the cosine distances between templates on the task of Masked LM, compared to the cosine distances depicted in figure \ref{fig:cos_distance_after_cleansing}. The increasing evaluation loss as depicted in figure \ref{fig:finetuning_loss} shows that training was not successful.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
-  \includegraphics[width=12cm]{finetuning_loss.png}\\
+  \includegraphics[width=12cm,height=8.5cm]{finetuning_loss.png}\\
   \caption{Training and evaluation loss for finetuning on masked }
   \label{fig:finetuning_loss}
 \end{figure}
