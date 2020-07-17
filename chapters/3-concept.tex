@@ -20,9 +20,11 @@ Let $g: \mathcal{A}^i \rightarrow \mathbb{R}^w$ be a function that takes a varia
 
 \textit{Regression}: Let $h: \left|s\right| \times \mathbb{R}^w \rightarrow \mathbb{R}^w, \; h(e_i, s, \Phi)=d$ be a function computed by a neural network, that based on a sequence of $s$ vectors $E = (e_j, ..., e_{j+s})$ predicts the vector $d$ at index $j+s+1$. The objective in this case is to learn parameters $\Phi$, so that the system predicts the vector following the sequence of vectors of length $s$. If the distance between the predicted vector $d$ and the actual vector $e_{j+s+1}$ is above or below certain threshold values, which will be computed by the q-th percentile of all loss values from the original dataset, then $\hat{b_i} = 1$ is returned, if it is inside these thresholds, then $\hat{b_i} = 0$ is returned.
 
-\subsection{Requirements and Assumptions}
+\subsection{Requirements and Assumptions \label{sec:requirements_and_assumptions}}
 \begin{enumerate}
-	\item 
+	\item The model requires a word vectors by a language model that has been pre-trained on a sufficiently large corpus.
+	\item The model requires \textit{normal} log data, which does not contain anomalies for training.
+	\item The model is not able to detect anomalies which are only in the variable part of the log messages. The model only considers the templates, i.e. keys.
 \end{enumerate}
 
 
@@ -45,12 +47,12 @@ Transfer learning builds onto this process. After a model has been trained as de
 \end{figure}
 
 \section{Pre processing \label{sec:pre_processing}}
-Log files are usually available in an unordered, raw state, and need to be ordered, parsed and transformed into an appropriate format so that they can be handled as sequences by a LSTM. The required steps for this purpose are outlined in this section. In the first subsection \ref{sec:conceptlogparsing}, the steps required for parsing logs are outlined, followed by the transformation into word embedding vectors in \ref{sec:word_vectorization}.
+Log files are usually available in an unordered, raw state, and need to be ordered, parsed and transformed into an appropriate format so that they can be handled as sequences by a LSTM. The required steps for this purpose are outlined in this section. In the first subsection \ref{sec:conceptlogparsing}, the steps required for parsing logs are outlined, followed by the transformation into word embedding vectors in \ref{sec:word_vectorization}. A diagram illustrating the complete pre-processing pipeline can be see in figure \ref{fig:full_preprocessing_pipeline}
 
 \subsection{Log Parsing}\label{sec:conceptlogparsing}
 Log parsing is an important step for automated log analysis, as already described in section \ref{sec:backgroundlogparsing}, since raw log messages are unstructured data and contain a lot of extra information. The result of the execution of a log parser can be see in figure \ref{fig:parsing}. There are a few important aspects to note here: Not only does the log parsing step extract log templates, it also extracts other valuable information in a structured way, namely timestamps and, in this example the bulk id. Timestamps are needed, in order to make sure that the logs are in the correct chronological order, since it is possible, that system logs are an aggregation of log output of different sub-routines or different instances, which can happen concurrently, thus producing unordered logs. Additionally to sorting by timestamps, it can also be required to sort system logs by group ids, instance ids or bulk ids as in the example figure \ref{fig:parsing} in order to be able to observe each self-contained block separately from other blocks.
 
-\subsection{Template cleansing \label{template_cleansing}}
+\subsection{Template cleansing \label{sec:template_cleansing}}
 Even though log parsing and the aforementioned ordering steps largely improve the further processability of logs for sequential learning, by making it possible to single out the fundamental semantics of a log event, they are still partly made up of special characters and variable names. The following characters are removed:
 \begin{enumerate}
 	\item All non-character tokens such as delimiters, digits, and particularly variable placeholders (\verb!<*>!).
@@ -67,11 +69,8 @@ After the aforementioned pre-processing steps, the log events are transformed in
 
 In order to compare the impact of the choice of a language model, two main approaches are implemented.
 
-\subsubsection{GLoVe-based Auto-Encoder Model \label{glove-approach}}
-The baseline approach that is used for comparison with the more complex transformer-based language model solutions consists of two main parts: First, GloVe \cite{pennington2014glove} is trained on the templates of a given dataset, to learn word embeddings for the words of the given corpus. It is then used to replace the words that the log events consist of, with corresponding word vectors. The resulting lists of word vectors are then padded with zeros, to receive lists of equal length. These are then used as input for a simple auto encoder neural network, in order to learn representations of reduced length for the given sentences. These representations are then used as input for the LSTM prediction model which is described in \ref{sec:lstm-model}.
-
 \subsubsection{Transformer-based Language Models \label{transformer-approach}}
-In oder to compare the baseline approach with more modern techniques, the pre-trained language models, namely Bert and GPT-2 are used in order to transform log events into equal length word embeddings. In contrast to the approach described in \ref{glove-approach}, Bert and GPT-2 are able to directly return word embeddings for whole sentences, even if they consist of an unequal number of words.
+In oder to be able to compare the quality different language model's word embeddings with regards to the task of anomaly detection, it is possible to easily swap the used language model for log event transformation. For this work, the pre-trained language models used for evaluation, are Bert, GPT-2 and XL-Transformers.
 
 
 
@@ -81,7 +80,7 @@ Word embeddings models are usually provided pre-trained in different formats (e.
 \subsection{Log Alteration\label{sec:logs_alteration}}
 By altering log events, the evolution of log events is being simulated. Since software is changed by developers, also the log statements are subject to constant change. It is desirable to build a flexible model that does not have to be retrained after each update of a log producing software. Log alteration is also used to simulate a different dataset B based on a given dataset A, for applying transfer learning, as outlined in \ref{sec:transferlearning}.
 
-Injection and alteration is done in a programmatically controllable manner. Various types of alterations are injected into original log data, either on the log event itself as in figure \ref{fig:changelogevent} or on the sequence of log events as in figure \ref{fig:changesequence}. With these changes, the evolution of log data is simulated. We assume that log data does not change drastically in its form, but 
+Injection and alteration is done in a programmatically controllable manner. Various types of alterations are injected into original log data, either on the log event itself as in figure \ref{fig:changelogevent} or on the sequence of log events as in figure \ref{fig:changesequence}.
 
 Three types of alterations are injected into the log events: a various amount of words is inserted between the tokens, for example words that appear in the context of logs, like "\textit{deleted}", "\textit{during}", "\textit{for}" or "\textit{time}", but for testing purposes, also words that are random in the context . Words can be also deleted. Finally, words can be replaced by new words. All of these alterations can be injected multiple times into the same log event. It is desirable that the system does not detect a log event as an anomaly, that has not been changed much, i.e. only one or two words have been added into a statement (e.g. if "\textit{* Took *.* seconds to deallocate network for instance.}" has been changed to "\textit{* Took \textcolor{red}{time} *.* seconds to deallocate network for \textcolor{red}{this} instance.}").
 %TODO how many words threshold for anomaly detection
@@ -102,14 +101,14 @@ Just like for the insertion of alterations on the log events themselves, it is d
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=6cm]{change_log_event.png}
-	\caption{Raw log message}
+	\caption{Altering log events.}
 	\label{fig:changelogevent}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=13cm,height=15cm,keepaspectratio]{change_sequences.pdf}
-	\caption{Raw log message}
+	\caption{Altering log sequences.}
 	\label{fig:changesequence}
 \end{figure}
 
@@ -158,8 +157,14 @@ After the matching process is finished, the system can read in the sequences of 
 \end{figure}
 
 \subsection{Regression \label{sec:regression}}
-For the regression approach, the neural network is trained to solve a regression task, with the input values of the training data being structured as described in \ref{sec:classification}, while the corresponding target value for the sequence of embeddings $(i, ..., i+s)$ is the embedding of the log event at position $i+s+1$, meaning the neural network shall predict the next embedding. After training on the original dataset, the mean squared error loss of every target word vector at position $i+s+1$ of the corresponding input sequence $(i, ..., i+s)$, and the predicted word vector of the neural network, is computed. Afterwards, the \textit{q-th} percentile of the gathered loss values is computed (the optimal value \textit{q} for the following purpose is to be determined by a simple grid-search). Now, for the sequences of the manipulated dataset, the loss values are computed the same way as for the original dataset. The system will then mark every log event whose word embedding's loss value is above the calculated percentile as an anomaly (1), otherwise as non anomalous (0). 
+For the regression approach, the neural network is trained to solve a regression task, with the input values of the training data being structured as described in \ref{sec:classification}, while the corresponding target value for the sequence of embeddings $E_i = (e_i, ..., e_{i+s})$ is the embedding of the log event at position $i+s+1$, meaning the neural network shall predict the next embedding $e_{i+s+1}$. After training on the original dataset, the mean squared error loss of every target word vector at position $i+s+1$ of the corresponding input sequence $E_i$, and the neural network's predicted word vector, is computed. Afterwards, the \textit{q-th} percentile of the agglomerated loss values of the original dataset is computed. The optimal value \textit{q} for the following purpose is to be determined by a simple grid-search. For the sequences of the manipulated test dataset, the loss values are computed in the same way as for the original dataset. The system will then mark every log event whose word embedding's loss value is above the calculated \textit{q-th} percentile as an anomaly (1), otherwise as non anomalous (0). This is depicted in figure \ref{fig:regression_with_threshold}.
 
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=15cm]{regression_box_plots_example.png} \\
+  \caption{Box plots showing the distribution of loss values for training and test data.}
+  \label{fig:regression_with_threshold}
+\end{figure}
 
 
 \section{Transfer Learning \label{sec:transferlearning}}
@@ -173,24 +178,29 @@ Transfer learning is the main focus of this work. It builds upon the aforementio
 \end{figure}
 
 \subsection{Classification \label{sec:transfer_classification}}
-Since training on dataset A has been conducted using classification, a mechanism for mapping the templates of dataset B to the classes which have been assigned to the templates of dataset A. For this, for every template of dataset B, the nearest neighbour of dataset A is assigned, as described in \ref{sec:classification} and depicted in figure \ref{fig:label_mapping}, without using a threshold for matching nearest neighbours, so that every template of dataset B will get a template class from dataset A assigned. The 
+For the classification approach, the model is first trained as depicted in the pre-processing and training part of figure \ref{fig:overall_system} on a dataset A. Then, in order to re-use the trained model, several preliminary steps are executed. First, every log event of training dataset B is mapped to the nearest neighbour of dataset A, i.e. the word embedding with the shortest cosine distance, and gets assigned the same class. This is the same procedure as described in \ref{sec:classification} and depicted in \ref{fig:label_mapping}, with the only difference that there does not exist a threshold for assigning a class. Every log event will get a class assigned. Then, few-shot training on dataset B will be executed, in order to slightly adjust the model to the new dataset B. As a final step, with the adjusted model on training dataset B, the prediction phase on a test dataset B, exactly as described in \ref{sec:classification} can be executed.
 
 \subsection{Regression \label{sec:transfer_regression}}
-For transfer learning using the regression-based approach, no further adaptations are required - the model is trained on a given dataset A, followed by few-shot training on dataset B. The model is then ready to make predictions on anomalies in dataset B using the approach described in \ref{sec:regression}
+For transfer learning using the regression-based approach, no further adaptations are required - the model is trained on a given train dataset A, followed by few-shot training on a train dataset B. The model is then ready to make predictions on anomalies on a test dataset B using the approach described in \ref{sec:regression}.
+
 
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=14cm]{Full_parsing.pdf}\\
-  \caption{Parsing }
-  \label{fig:Full pre-processing workflow}
+  \includegraphics[width=14cm]{parsing_full.png}\\
+  \caption{One full iteration of the pre-processing pipeline.}
+  \label{fig:full_preprocessing_pipeline}
 \end{figure}
 
 
 \section{Possible Improvements and Extendibility\label{sec:improvements}}
-In this section, possible improvements to the model are identified. Possible improvements include the way word embeddings are obtained from language models and 
+In this section, possible improvements for the model are identified. 
 
-The word embeddings are taken from the used language models as they are. Finetuning on the log corpora is only conducted using the default tasks that have been used to train the language model on extremely large corpora. The corpora on log data are likely to be too small. Even though most log events are sentences in English, they are of a very ting A deeper investigation on how to train the language model specifically on the task of anomaly detection could potentionally be useful in order to obtain better results.
+In order to have more ways of evaluating different language models, next to the regression and multi-classification approach, a binary classification approach can be implemented.
+
+To make the LSTM model more robust to alterations in a dataset, the attention mechanism, as described by Vaswani et al. \cite{vaswani2017attention} could be adopted.
+
+The word embeddings are taken from the used language models as they are. Finetuning on the log corpora is only conducted using the default tasks that have been used to train the language model on extremely large corpora. The corpora on log data are likely to be too small. Even though most log events are sentences in English, they use very reduced idioms. A deeper investigation on how to train the language model specifically on the task of anomaly detection could potentially be useful in order to obtain better results.
 
 
 

@@ -2,6 +2,340 @@
 
 \begin{appendix}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			R E G R E S S I O N
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Regression}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			INSERT WORDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on inserting one word.}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			REMOVE WORDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on removing one word.}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			REPLACE WORDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on replacing one word.}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			SHUFFLE LINES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on shuffling lines.}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			DUPLICATE LINES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on duplicating lines.}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			DELETE LINES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on deleting lines.}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			C L A S S I F I C A T I O N 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Classification}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			INSERT WORDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on inserting one word.}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			REMOVE WORDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on removing one word.}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			REPLACE WORDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on replacing one word.}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			SHUFFLE LINES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on shuffling lines.}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			DUPLICATE LINES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on duplicating lines.}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			DELETE LINES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\centering
+\begin{tabular}{ c l l l l }
+\toprule
+Injection Ratio & Metric & Bert & XL & GPT-2\\
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+5\%  & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+10\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\midrule
+     & F1-Score & 0.2232 & 0.6223 & 0.892\\
+15\% & Precision & 0.2416 & 0.4449 & 0.892\\
+     & Recall & 0.0024 & 0.0047 & 0.892\\ 
+\bottomrule
+\end{tabular}
+\caption{Experiment results on deleting lines.}
+\end{table}
+
+
 \end{appendix}
 
 \endinput

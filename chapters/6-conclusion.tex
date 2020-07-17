@@ -1,35 +1,31 @@
-\chapter{Conclusion\label{cha:chapter7}}
-The final chapter summarizes the thesis. The first subsection outlines the main ideas behind Component X and recapitulates the work steps. Issues that remained unsolved are then described. Finally the potential of the proposed solution and future work is surveyed in an outlook.
+\chapter{Conclusion\label{cha:conclusion}}
+
+
 
 \section{Summary\label{sec:summary}}
 
-Explain what you did during the last 6 month on 1 or 2 pages!
-\\
-\\
-\noindent The work done can be summarized into the following work steps
+Finding suitable representations for log data in the form of word embeddings is an important step to build a robust, and environment-agnostic anomaly detection model. This work presents an evaluation of three different word embedding models, namely Bert, GPT-2 and XL-Transformers and compares them using a regression-based and a classification-based approach. Additionally, in order to evaluate the robustness of the model, different alterations are injected into the logs. These alterations are finally combined together, to simulate the existence of a different log dataset B and the portability of obtained knowledge from training on a log dataset A.
 
+The work done can be summarised by the following steps:
 \begin{itemize}
-		\item Analysis of available technologies
-		\vspace{-0.11in} 
-		\item Selection of 3 relevant services for implementation
-		\vspace{-0.11in} 
-		\item Design and implementation of X on Windows
-		\vspace{-0.11in} 
-		\item Design and implementation of X on mobile devices
-		\vspace{-0.11in} 
-		\item Documentation based on X
-		\vspace{-0.11in} 
-		\item Evaluation of the proposed solution
+		\item Finding a suitable log parser by evaluating the available log parsers on their performance on the log dataset.
+		\item Finding suitable language models in order to represent log templates so that they can be used for the task of anomaly detection
+		\item Finding a means to alter log datasets in such a way, so that the existence of a different log dataset and the evolution of log data can be simulated in oder to evaluate the performance of the transfer learning method.
+		\item Evaluation of the proposed model by comparing word embeddings obtained by different pre-trained language models.
 \end{itemize}
 
-\section{Dissemination\label{sec:dissemination}}
-
-Who uses your component or who will use it? Industry projects, EU projects, open source...? Is it integrated into a larger environment? Did you publish any papers?
 
 \section{Problems Encountered\label{sec:problems}}
+Several impediments occurred during the development of the model. 
 
-Summarize the main problems. How did you solve them? Why didn't you solve them?
+At the beginning, it was not obvious, which word embeddings to use in order to represent log events. First attempts were made with GloVe, using word vectors that were trained only the available small log corpus, since the publicly available pre-trained vectors did not have representations for log-domain-specific words like "MB", "GB", "deallocate", "VM". These representations of log events of unequal length were padded with zeros and fed into an Auto Encoder, in order to learn the sentence representations. Then, the latent space representation of every log event was used in order to obtain representations of equal length. This attempt yielded acceptable results on the easiest case of injecting anomalies without alterations, but were disappointing when injecting alterations, making it unfit for the transfer approach. This was unfortunate, since a lot of time was invested into this approach. Using more sophisticated language models like Bert delivered better results overall.
+
+Finding appropriate hyperparameters for the model, for example sequence length, number of hidden units and number of layers for the LSTM or clipping, was not easy in the beginning, since all of them heavily influence the end result if not set correctly. A lot of development time was invested, trying to find the reasons for problems elsewhere, when the only problem was for example a wrongly chosen value for gradient clipping.
 
 \section{Outlook\label{sec:outlook}}
+A very important step in order to make the proposed model even more robust, resilient and most importantly able to transfer knowledge on new datasets, evaluation into finding a proper attention mechanism that fits the use-case correctly and enhances it. The mentioned papers in \ref{cha:related_work} have proven that using an attention mechanism in combination with a LSTM can highly improve the results obtained from the model.
 
-Future work will enhance Component X with new services and features that can be used ...
+Fine-tuning a pre-trained language model explicitly on the task of anomaly detection by integrating the fine-tuning step into the model's pipeline, can potentially improve the quality of the word embeddings. This can especially be useful for the transfer learning task.
+
+
+
