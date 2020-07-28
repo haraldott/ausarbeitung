@@ -4,14 +4,14 @@
 
 \section{Summary\label{sec:summary}}
 
-Finding suitable representations for log data in the form of word embeddings is an important step to build a robust, and environment-agnostic anomaly detection model. This work presents an evaluation of three different word embedding models, namely Bert, GPT-2 and XL-Transformers and compares them using a regression-based and a classification-based approach. Additionally, in order to evaluate the robustness of the model, different alterations are injected into the logs. These alterations are finally combined together, to simulate the existence of a different log dataset B and the portability of obtained knowledge from training on a log dataset A.
+Finding suitable representations for log data in the form of word embeddings is an important step towards building a robust, environment-agnostic anomaly detection model. This work presents an evaluation of three different word embedding models, namely Bert, GPT-2 and XL-Transformers and compares them using a regression-based and a classification-based approach. Additionally, in order to evaluate the robustness of the model, different alterations are injected into the logs. These alterations are finally combined together, to simulate the existence of a different log dataset B and the portability of obtained knowledge from training on a log dataset A.
 
 The work done can be summarised by the following steps:
 \begin{itemize}
 		\item Finding a suitable log parser by evaluating the available log parsers on their performance on the log dataset.
 		\item Finding suitable language models in order to represent log templates so that they can be used for the task of anomaly detection
-		\item Finding a means to alter log datasets in such a way, so that the existence of a different log dataset and the evolution of log data can be simulated in oder to evaluate the performance of the transfer learning method.
-		\item Evaluation of the proposed model by comparing word embeddings obtained by different pre-trained language models.
+		\item Finding a means to alter log datasets in such a way that the existence of a different log dataset and the evolution of log data can be simulated in oder to evaluate the performance of the transfer learning method.
+		\item Evaluation of the proposed model by comparing the quality of word embeddings obtained by different pre-trained language models with regards to the task of anomaly detection in system logs.
 \end{itemize}
 
 
