@@ -1,9 +1,14 @@
 \chapter{Results\label{cha:results}}
 
-In the following chapter, the achieved results of the concept are presented. The described approaches are evaluated with regards to the common metrics precision, recall, and F1-Score. Different hyperparameter setups are discussed and visualised in graphs. In particular, the language models Bert, XL-Transformers and GPT-2 as described in \ref{transformer-approach} are compared. Additionally, the regression-based method as described in \ref{sec:regression} and the multi-classification method as described in \ref{sec:classification} are compared, showing advantages or disadvantages among each other.
+In the following chapter, the achieved results of the model are presented. The described approaches are evaluated with regards to the common metrics precision, recall, and F1-Score. Different hyperparameter-setups are discussed and visualised in graphs. In particular, the language models Bert, XL-Transformers and GPT-2 as described in \ref{transformer-approach} are compared. Additionally, the regression-based method as described in \ref{sec:regression} and the multi-classification method as described in \ref{sec:classification} are compared, showing advantages or disadvantages among each other.
+
+In section \ref{sec:experimental_setup} details about the used hardware and technologies are listed, followed by section \ref{sec:evaluation} in which the results of the evaluation are presented. Finally, in section \ref{sec:discussion_results} the results of the evaluation are discussed.
 
 
-\section{Experimental Setup}
+\section{Experimental Setup\label{sec:experimental_setup}}
+In this section, the used hardware, libraries, the dimensions of the word embeddings for every language model and the used log dataset are described.
+
+\subsection{Hardware and library specifications}
 The machine that was used to conduct the experiments has the following specifications:
 \begin{itemize}
 	\item Intel(R) Core(TM) i5-9600K CPU @ 3.70GHz
@@ -12,7 +17,7 @@ The machine that was used to conduct the experiments has the following specifica
 	\item Ubuntu 18.04.3 LTS
 \end{itemize}
 
-\noindent The most relevant libraries that were used, with their corresponding versions can be seen in the following list:
+\noindent The most relevant libraries that were used are:
 \begin{itemize}
 	\item Python 3.6.7
 	\item Numpy 1.14.5
@@ -46,7 +51,8 @@ In order to examine the ability of the model to transfer the knowledge obtained 
 
 
 
-\section{Evaluation}
+\section{Evaluation\label{sec:evaluation}}
+In this section, the results of the evaluation between the two anomaly detection approaches, namely the regression-based approach and the classification-based approach are compared using three different language models, namely Bert, XL-Transformers and GPT-2. The pre-processing steps string cleansing and finetuning, as described \ref{sec:pre_processing} are investigated with regards to their potential on benefiting the quality of the word embeddings. Subsequently, the results of the evaluation using one dataset and the transfer learning approach are presented.
 \subsection{Pre-Processing}
 \subsubsection{String cleansing}
 String cleansing, as described in \ref{sec:template_cleansing}, can potentially  improve distinguishability between templates drastically in the used dataset.
@@ -319,7 +325,15 @@ In this subsection, the results of the transfer learning experiment are presente
 
 \subsubsection{Transfer learning using the regression-based approach \label{sec:results-regression-transfer}}
 
-As described in \ref{sec:transfer_learning_setup}, the alterations that were injected separately in the experiments on one dataset in the last section, are now injected all at once, to simulate a different dataset. Figure \ref{fig:results_transfer_regression} shows the results for alterations on 5\%, 10\% and 15\% of the log lines of all possible alterations at the same time, after 60 epochs of training on dataset A and 5 epochs of training on dataset B. It is clearly visible, that Bert and XL-Transformers are both degrading substantially in all metrics, yet GPT-2 achieves good results even with an increased alteration ratio.
+As described in \ref{sec:transfer_learning_setup}, the alterations that were injected separately in the experiments on one dataset in the last section, are now injected all at once, to simulate a different dataset. Figure \ref{fig:results_transfer_regression} shows the results for alterations on 5\%, 10\% and 15\% of the log lines of all possible alterations at the same time, after 60 epochs of training on dataset A and 5 epochs of training on dataset B. It is clearly visible, that Bert and XL-Transformers are both degrading substantially in all metrics, yet GPT-2 achieves good results even with an increased alteration ratio. Figure \ref{fig:regression_transfer_reverse} shows the results for reversing the order of events, with Bert and XL-Transformers achieving F1-Scores of 0.79 and 0.89 respectively, precision scores of 1.0, but GPT-2 achieving an unsatisfying F1-Score of 0.23, while still achieving a precision score of 1.0.
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=6cm,height=4.5cm]{results/transfer/transfer_regression_reverse.png}\\
+  \caption{Scores for detecting reversed order of log events for transfer learning, using regression.}
+  \label{fig:regression_transfer_reverse}
+\end{figure}
 
 \begin{figure*}[ht!]
    \subfloat[5\% alteration\label{fig:results_transfer_regression_0.05}]{%
@@ -367,8 +381,16 @@ Figure \ref{fig:results_transfer_regression_per_epoch} depicts the development o
 \subsubsection{Transfer learning using the classification-based approach \label{sec:results-classification-transfer}}
 
 For transfer learning using the classification-based approach, the same experiments as described in \ref{sec:results-regression-transfer} were conducted. Figure \ref{fig:results_transfer_classification} shows the results of the transfer learning experiment. Interesting observations include the stable results achieved using Bert, which are little sensitive to increasing alteration ratios and the results of GPT-2, which are not as useful as compared to the regression-based approach.
-Figure \ref{fig:results_transfer_multiclass_per_epoch} depicts the development of the metrics of detecting anomalies for every additional epoch of training on dataset B. Bert improves the most per epoch, ramping up steeply after epoch 5 is completed, GPT-2 stays almost the same and XL-Transformers has small improvements over the course of the 5 epochs. These findings are confirmed by the ROC curve plots which can be seen in figure \ref{fig:results_transfer_multiclass_roc}, showing very good results for Bert,  acceptable results for Xl-Transformers and far less satisfying results for GPT-2.
+Figure \ref{fig:results_transfer_multiclass_per_epoch} depicts the development of the metrics of detecting anomalies for every additional epoch of training on dataset B. Bert improves the most per epoch, ramping up steeply after epoch 5 is completed, GPT-2 stays almost the same and XL-Transformers has small improvements over the course of the 5 epochs. These findings are confirmed by the ROC curve plots which can be seen in figure \ref{fig:results_transfer_multiclass_roc}, showing very good results for Bert, acceptable results for Xl-Transformers and far less satisfying results for GPT-2. Yet, figure \ref{fig:classification_transfer_reverse} shows, that for the classification approach, when reversing the order of log events, all three language models achieve perfect detection scores of 1.0 for every metric.
 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=6cm,height=4.5cm]{results/transfer/transfer_classification_reverse.png}\\
+  \caption{Scores for detecting reversed order of log events for transfer learning, using classification.}
+  \label{fig:classification_transfer_reverse}
+  
+\end{figure}
 \begin{figure*}[ht!]
    \subfloat[5\% alteration\label{fig:results_transfer_classification_0.05}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/transfer/transfer_multiclass_0.05_ratio.png}}

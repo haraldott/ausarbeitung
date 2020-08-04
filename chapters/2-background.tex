@@ -1,8 +1,7 @@
 \chapter{Background\label{cha:background}}
-This chapter describes the technologies and terminologies that are most important for the proposed solution, and puts them into context.
+This chapter summarises the technologies and terminologies that are most important for the proposed solution, and puts them into context.
 
-In \ref{sec:cloud-systems} a description of the term cloud computing is given. In \ref{sec:deep-learning} the theoretical foundation of deep neural networks is described, followed by an introduction to LSTMs. \ref{sec:natural-language-processing} gives insights on how natural language can be represented using language models.
-In \ref{sec:anomaly-detection} techniques on tackling the problem of anomaly detection with deep learning techniques are presented.
+In section \ref{sec:cloud-systems} a description of the term \textit{cloud computing} is given. In section \ref{sec:deep-learning} the theoretical foundation of deep neural networks is described, followed by an introduction to LSTMs. In section \ref{sec:anomaly-detection} techniques to tackle the problem of anomaly detection in general are presented. \ref{sec:natural-language-processing} gives insights on how natural language can be represented using language models. Finally, in section \ref{sec:backgroundlogparsing}.
 
 \section{Cloud Computing\label{sec:cloud-systems}}
 The term \textit{cloud computing} usually refers to hardware and systems software in large data centres that provide a platform for applications delivered as services over the Internet. Due to the possibilities offered by clouds that are available in a pay-as-you-go manner, businesses with new ideas do not require enormous amounts of prefinancing in a hardly projectable amount of hardware and human operators to get their services online. It allows them to dynamically adapt to changing business needs without neither overcommitting hardware for services that do not turn out to be as intensely used as expected, nor undercommitting for a service that excels expectations, thus missing potential revenue, due to not being able to cope with the demand \cite{armbrust2010view}.
@@ -22,7 +21,7 @@ Making sure that these large numbers of services and virtual machines are operat
 \begin{figure}[h]
   \centering
   \includegraphics[width=15cm]{cloud.png}\\
-  \caption{Traditional architeture vs. virtualised architecture}
+  \caption{Cloud computing services}
   \label{fig:cloud}
 \end{figure}
 
@@ -63,7 +62,7 @@ If $l=L$, then every $y_k$ can be obtained in the following way:
 	y_k = h_L(a_k^{(L)}) = h_L\Big( \bold{w}_k^{(L)^T} \bold{z}^{(L-1)} \Big)
 \end{equation}
 
-The result $y_k$ of the computation of $x_k$ is then compared to the real value $t_k$ using an \textit{error function}. Mean Squared Error $MSE = \frac{1}{n} \sum_{i=1}^n (t_k-y_k)^2$ can be used for regression problems, calculating the average squared difference between the estimated and the actual values, and Cross-Entropy $-\sum_{c=1}^My_{o,c} \: \log(p_{o,c})$ for multiclass classification, calculating the separate loss for each class label per observation. The obtained values are then fed into the \textit{back propagation algorithm}, updating weights $w_j$, thus trying to minimise the error. 
+The result $y_k$ of the computation of $x_k$ is then compared to the real value $t_k$ using an \textit{error function}. Mean Squared Error $MSE = \frac{1}{n} \sum_{i=1}^n (t_k-y_k)^2$ can be used for regression problems, calculating the average squared difference between the estimated and the actual values, and Cross-Entropy $-\sum_{c=1}^My_{o,c} \: \log(p_{o,c})$ for classification, calculating the separate loss for each class label per observation. The obtained values are then fed into the \textit{back propagation algorithm}, updating weights $w_j$, thus trying to minimise the error. 
 
 
 \begin{comment}
@@ -82,7 +81,7 @@ Through the surge of available cheap computing power, deep learning models with 
 \begin{figure}[h]
   \centering
   \includegraphics[width=10cm]{LSTM.png}\\
-  \caption{LSTM block \cite{graves2013speech}}
+  \caption{A LSTM block \cite{graves2013speech}}
   \label{fig:lstm_blocks}
 \end{figure}
 
@@ -149,7 +148,7 @@ h_t = o_t \cdot \tanh(C_t)
 \begin{figure}[h]
   \centering
   \includegraphics[width=10cm]{Bi-LSTM} \\
-  \caption{Bi-directional LSTM \cite{graves2013speech}.}
+  \caption{A Bi-directional LSTM \cite{graves2013speech}.}
   \label{fig:bi-lstm}
 \end{figure}
 In a sequence prediction task, in which one has access to both past and future input features for a given point in time, a bidirectional LSTM network as depicted in \ref{fig:bi-lstm} can be applied as proposed by Graves et al. \cite{graves2013speech}. In this way, it is possible to make us of past features via the forward state and future features via the backward states. Forward and backward passes are executes similarly to 

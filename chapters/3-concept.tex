@@ -1,10 +1,11 @@
 \chapter{Concept \label{cha:concept}}
 Establishing a connection between the latest advances in NLP and anomaly detection in system log data is a recently emerged field in research. The need for using language models to convert log events into word embeddings emerges from the weaknesses of older anomaly detection approaches that are not flexible enough to cope with the complex nature of system log data. There exist difficulties in reusing previously obtained knowledge from training on data from a given dataset and transferring it to a differently structured dataset. Most proposed techniques for solving the problem of anomaly detection in system log data suffer from not being transferable and being non-resilient to changing log data. The objective of this work is to provide a means to automatically detect anomalies in logs that are potentially affected by processing noise and changes of log events by updates of the underlying software, and to transfer knowledge obtained from a dataset of log sequences to another dataset of logs with a transfer method.
 
-In section \ref{sec:problem_statement}, the general problem statement is given, and necessary requirements for this work are specified. 
+In section \ref{sec:problem_statement}, the general problem statement is defined, and necessary requirements for the model are specified. 
 In the following section \ref{sec:overall_system}, the overall system architecture with its components is outlined and visualised.
-In section \ref{sec:learning} the developed approaches, including the baseline approach, are explained in detail. There exist three approaches, (1) the baseline approach featuring learning of sentence level log line representations with the help of an auto encoder on the basis of word level language representations and classification using regression, followed by the (2) regression and (3) multi-class classification approach using log line representations obtained by a language model which is able to transform log lines on sentence level.
-In section \ref{sec:transferlearning} the transfer learning mechanism is described in detail.
+In section \ref{sec:pre_processing} the necessary pre-processing steps for preparing the raw log messages for the anomaly prediction model are described in detail.
+In section \ref{sec:prediction_model} the developed prediction approaches are described in detail. There exist two approaches, the (1) regression and the (2) classification approach, both using log event representations obtained by a language model.
+In section \ref{sec:transferlearning} the transfer learning mechanism is described.
 In the final section \ref{sec:improvements} possible improvements of the proposed approach are presented.
 
 
@@ -181,7 +182,7 @@ Transfer learning is the main focus of this work. It builds upon the aforementio
 For the classification approach, the model is first trained as depicted in the pre-processing and training part of figure \ref{fig:overall_system} on a dataset A. Then, in order to re-use the trained model, several preliminary steps are executed. First, every log event of training dataset B is mapped to the nearest neighbour of dataset A, i.e. the word embedding with the shortest cosine distance, and gets assigned the same class. This is the same procedure as described in \ref{sec:classification} and depicted in \ref{fig:label_mapping}, with the only difference that there does not exist a threshold for assigning a class. Every log event will get a class assigned. Then, few-shot training on dataset B will be executed, in order to slightly adjust the model to the new dataset B. As a final step, with the adjusted model on training dataset B, the prediction phase on a test dataset B, exactly as described in \ref{sec:classification} can be executed.
 
 \subsection{Regression \label{sec:transfer_regression}}
-For transfer learning using the regression-based approach, no further adaptations are required - the model is trained on a given train dataset A, followed by few-shot training on a train dataset B. The model is then ready to make predictions on anomalies on a test dataset B using the approach described in \ref{sec:regression}.
+For transfer learning using the regression-based approach, the model is first trained as depicted in the pre-processing and training part of figure \ref{fig:overall_system} on a dataset A. Then, the same weights of the LSTM that have been learned from this training are re-loaded, and few-shot training on a different train dataset B is executed. The model is then ready to make predictions on anomalies on a test dataset B using the approach described in \ref{sec:regression}.
 
 
 
