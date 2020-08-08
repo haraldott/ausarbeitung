@@ -11,7 +11,7 @@ As these cloud systems are becoming increasingly complex, they are getting harde
 
 
 \section{Scope\label{sec:scope}}
-The scope of this work is to find an appropriate way to represent dynamically changing log events using language models, and to assess their quality with regards to their ability of being utilised for solving the problem of anomaly detection. Therefore, an approach using an auto encoder to learn fixed length representations of log events that have been transformed into word embeddings with GloVe, is presented as baseline. Next, an approach to utilising word embeddings obtained from Bert are compared to those obtained from GPT-2 to use as input for a LSTM to  learn error-free log sequences in a both supervised and unsupervised manner. For this purpose, three different ways of mapping the input of multiple log events to a target space, namely binary classification, multi-class classification and regression are evaluated.
+The scope of this work is to find an appropriate way to represent dynamically changing log events using language models, and to assess their quality with regards to their ability of being utilised for solving the problem of anomaly detection. Therefore, an approach using an auto encoder to learn fixed length representations of log events that have been transformed into word embeddings with GloVe, is presented as baseline. Next, an approach to utilising word embeddings obtained from Bert, GPT-2 and XL-Transformers as input for a LSTM to  learn error-free log sequences in a both supervised and unsupervised manner. For this purpose, two different ways of mapping the input of multiple log events to a target space are evaluated, namely classification and regression.
 
 %TODO big picture
 

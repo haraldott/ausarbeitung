@@ -9,7 +9,7 @@ The term \textit{cloud computing} usually refers to hardware and systems softwar
 Virtualisation plays a vital role in modern clouds, offering the possibility for numerous users and their applications to share infrastructure in parallel, in contrast to conventional hosting, as depicted in figure \ref{fig:virtualisation}. Through virtualisation, it is possible to achieve a better degree of utilisation of available hardware, for it allows a hardware server to run multiple software servers at the same time. Modern cloud services providers, like Amazon AWS or Microsoft Azure offer a vast number of different useful services, that can be provisioned flexibly and rapidly to the user, like allocation of task-specific hardware, different database types, object storage solutions or applications like analysis or management tools, as depicted in figure \ref{fig:cloud}. End customers can be individual persons or businesses. While the services offered by public cloud providers are usually full-fledged and can be used by an end customer directly, the services offered by a cloud provider can also be integrated into a private cloud solution, thus resulting in a hybrid cloud, where workloads can be dynamically shifted between private and public clouds as costs and computing capacity needs change.
 
 
-Making sure that these large numbers of services and virtual machines are operating correctly is a challenging task for the cloud service providers. It is therefore vital to keep records of program executions in the form of logs to be able to retrace errors that have occurred.
+Making sure that these large numbers of services and virtual machines are operating correctly is a challenging task for the cloud service providers. It is therefore vital to keep records of program executions in the form of system logs to be able to retrace errors that have occurred.
 
 \begin{figure}[h]
   \centering
@@ -26,7 +26,35 @@ Making sure that these large numbers of services and virtual machines are operat
 \end{figure}
 
 
+\section{Anomaly Detection \label{sec:anomaly-detection}}
+In order to track down failures on the basis of system log data, a mechanism that is able to distinguish normal from anomalous system log patterns needs to be utilised.
+\textit{Anomaly detection} describes the general problem of finding subsets or patterns in data, that do not conform to a defined notion. These patterns are often referred to as outliers or anomalies.
+
+Anomalies can arise in datasets for various reasons, like system errors, fraud or malicious activities. It often might appear to be straight-forward to define normal regions, and declare all data laying outside of these regions as anomalies. Unfortunately, finding these normal regions is in fact very difficult, since it might not always be possible to capture the nature of \textit{normal} data in its completeness, due to lacking data or the unsharp border of normal and abnormal. Consider figure \ref{fig:anomaly_dataset}, which illustrates the presence of normal regions and anomalies in a dataset. The datapoints in the regions $D_1$ and $D_2$ are considered normal, since the majority of observations lie in these regions. Points that are sufficiently far away, like the points in regions $A_1$ and $A_2$ are considered anomalies. But consider also the points $B_1$. Should they be marked as normal or abnormal? Are the borders around $D_1$ and $D_2$ correct, or are they not sufficiently broad, due to the lack of enough normal training examples? 
+Additionally to the difficulty of finding correct division of normal and abnormal, normal behaviour can be subject to constant evolution in a dynamic system, thus making previous definitions of \textit{normal} behaviour wrong, obsolete or incomplete. Additionally, it is often hard or impossible to obtain labeled data for the desired domain, thus hindering the training and verification of a model \cite{chandola2009anomaly}.
+
+Due to the difficulties arising from the aforementioned constraints, solutions to the problem of anomaly detection are usually very domain-specific, influenced by the form in which data is available, labeled or unlabeled and the form of anomalies which are to be detected. Solutions presented by researchers feature techniques from various fields, including data mining, statistics and machine learning which are applied to the domain in question \cite{chandola2009anomaly}. Figure \ref{fig:anomaly_technique} outlines the central steps involved in finding an appropriate anomaly detection technique to a given problem.
+
+
+\begin{figure}[h]
+  \centering
+\includegraphics[width=15cm,height=3.5cm]{anomaly_detection_techniques.pdf}\\ 
+  \caption{Schema of the development of an anomaly Detection technique \cite{chandola2009anomaly}.}
+  \label{fig:anomaly_technique}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=15cm]{anomalies.pdf}\\
+  \caption{Example of anomalies in a dataset.}
+  \label{fig:anomaly_dataset}
+\end{figure}
+
+
+
+
 \section{Deep Learning \label{sec:deep-learning}}
+Deep learning is a sub-category of machine learning that is able to achieve remarkable results in the area of anomaly detection by learning to represent data in data structures within a neural network. Deep learning can outperform traditional machine learning techniques as the amount of data increases \cite{chalapathy2019deep}. Section \ref{sec:neural-networks} gives an introduction to neural network, which are the computational basis of deep learning. Section \ref{sec:lstm} describes LSTMs, which is a deep learning technique that is specialised in handling time series data. Section \ref{sec:bi-lstm} introduces Bi-LSTMs, an enhancement to standard LSTMs.
 \subsection{Neural Networks \label{sec:neural-networks}}
 \begin{figure}[h]
   \centering
@@ -34,15 +62,15 @@ Making sure that these large numbers of services and virtual machines are operat
   \caption{A neural network \cite{hallmachinelearning}.}
   \label{fig:neural_network}
 \end{figure}
-Neural networks are self-learning systems that constitute a subcategory of machine learning. By analysing training examples, it learns to compute a functional relationship between an input and an output \cite{sibi2013analysis}. Figure \ref{fig:neural_network} is an illustration of a classical feed-forward neural network. It consist of \textit{neurons} and \textit{weights} connecting the neurons. There are three types of neurons: Each input value maps to an \textit{input} neuron depicted as $x_n$. \textit{Hidden} neurons, depicted as $z_i$ are predictors created by mathematical functions and the \textit{output} neurons, depicted as $y_k$ gather given predictions and compute the output \cite{hallmachinelearning}. Given data pairs $(x_1, t_1), ..., (x_N, t_N)$ with $x_n \in \mathbb{R}^D$ being input data, mapping to $D$ input neurons, and $t_n \in \mathbb{R}^K$ being target data. Each component $x_n$ is fed to one input neuron. If $L$ is the number of layers, then there are $L-1$ hidden layers. The network's latent variables of the hidden neurons are denoted by $z_m^{(l)}$. When data is being forwarded through the network, with the goal of obtaining a prediction from the network, the following formulas are relevant and describe every step through the network. The result of a complete forward propagation is denoted by activation \ref{eq:activation}:
+Neural networks are systems that learn to compute a functional relationship between an input and an output by analysing training examples \cite{sibi2013analysis}. Figure \ref{fig:neural_network} is an illustration of a classical feed-forward neural network. It consist of \textit{neurons} and \textit{weights} connecting the neurons. There are three types of neurons: Each input value maps to an \textit{input} neuron depicted as $x_n$. \textit{Hidden} neurons, depicted as $z_i$ are predictors created by mathematical functions and the \textit{output} neurons, depicted as $y_k$ gather given predictions and compute the output \cite{hallmachinelearning}. Given data pairs $(x_1, t_1), ..., (x_N, t_N)$ with $x_n \in \mathbb{R}^D$ being input data, mapping to $D$ input neurons, and $t_n \in \mathbb{R}^K$ being target data. Each component $x_n$ is fed to one input neuron. If $L$ is the number of layers, then there are $L-1$ hidden layers. The network's latent variables of the hidden neurons are denoted by $z_m^{(l)}$. When data is being forwarded through the network, with the goal of obtaining a prediction from the network, the following formulas are relevant and describe every step through the network. The result of a complete forward propagation is denoted by activation \ref{eq:activation}:
 
 \begin{equation}\label{eq:activation}
 	a_j^{(l)} = \sum_{i=1}^{M_{l-1}}w_{ji}^{(l)}z_i^{(l-1)} = \bold{w}_j^{(l)^T} \bold{z}^{(l-1)}	
 \end{equation}
 
-On the result of this computation, an \textit{activation function} is applied as in \ref{eq:zj}. There exists a variety of activation functions, depending on the use case. Activation functions transform the activation of output neurons as in \ref{eq:activation} into an output signal \cite{sibi2013analysis}. For \textbf{regression} problems, the linear activation function $h(x)=x$ can be used. For \textbf{multi-classification} problems, where $t_n$ is a set of classes, the softmax function $\sigma(a)_j= \frac{e^{a_j}}{\sum_{k=1}^Ke^{a_k}}$ is used \cite{hallmachinelearning}.
+On the result of this computation, an \textit{activation function} is applied as in \ref{eq:zj}. There exists a variety of activation functions, depending on the use case. Activation functions transform the activation of output neurons as in \ref{eq:activation} into an output signal \cite{sibi2013analysis}. For \textbf{regression} problems, the linear activation function $h(x)=x$ can be used. For \textbf{multi-class classification} problems, where $t_n$ is a set of classes, the softmax function $\sigma(a)_j= \frac{e^{a_j}}{\sum_{k=1}^Ke^{a_k}}$ is used \cite{hallmachinelearning}.
 
-There are more cases, but regression and multi-classification are the most relevant here, as they are used in chapter \ref{cha:concept}.
+There are more cases, but regression and multi-class classification are the most relevant here, as they are used in chapter \ref{cha:concept}.
 
 \begin{equation} \label{eq:zj}
 	z_j^{(l)} = h_l(a_j^{(l)}) = h_l\Big(\bold{w}_j^{(l)^T} \bold{z}^{(l-1)}\Big)	
@@ -160,34 +188,15 @@ The forward and backward passes over the unfolded network over time are carried 
 
 
 
-\section{Anomaly Detection \label{sec:anomaly-detection}}
-\textit{Anomaly detection} describes the general problem of finding subsets or patterns in data, that do not conform to a defined notion. These patterns are often referred to as outliers or anomalies.
 
-Anomalies can arise in datasets for various reasons, like system errors, fraud or malicious activities. It often might appear to be straight-forward to define normal regions, and declare all data laying outside of these regions as anomalies. Unfortunately, finding these normal regions is in fact very difficult, since it might not always be possible to capture the nature of \textit{normal} data in its completeness, due to lacking data or the unsharp border of normal and abnormal. Consider figure \ref{fig:anomaly_dataset}, which illustrates the presence of normal regions and anomalies in a dataset. The datapoints in the regions $D_1$ and $D_2$ are considered normal, since the majority of observations lie in these regions. Points that are sufficiently far away, like the points in regions $A_1$ and $A_2$ are considered anomalies. But consider also the points $B_1$. Should they be marked as normal or abnormal? Are the borders around $D_1$ and $D_2$ correct, or are they not sufficiently broad, due to the lack of enough normal training examples? 
-Additionally to the difficulty of finding correct division of normal and abnormal, normal behaviour can be subject to constant evolution in a dynamic system, thus making previous definitions of \textit{normal} behaviour wrong, obsolete or incomplete. Additionally, it is often hard or impossible to obtain labeled data for the desired domain, thus hindering the training and verification of a model \cite{chandola2009anomaly}.
-
-Due to the difficulties arising from the aforementioned constraints, solutions to the problem of anomaly detection are usually very domain-specific, influenced by the form in which data is available, labeled or unlabeled and the form of anomalies which are to be detected. Solutions presented by researchers feature techniques from various fields, including data mining, statistics, machine learning which are applied to the domain in question \cite{chandola2009anomaly}. Figure \ref{fig:anomaly_technique} outlines the central steps involved in finding an appropriate anomaly detection technique to a given problem.
-
-
-\begin{figure}[h]
-  \centering
-\includegraphics[width=15cm,height=3.5cm]{anomaly_detection_techniques.pdf}\\ 
-  \caption{Schema of the development of an anomaly Detection technique \cite{chandola2009anomaly}.}
-  \label{fig:anomaly_technique}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=15cm]{anomalies.pdf}\\
-  \caption{Example of anomalies in a dataset.}
-  \label{fig:anomaly_dataset}
-\end{figure}
 
 
 \section{Natural Language Processing \label{sec:natural-language-processing}}
+Since raw log data cannot be processed without further ado by a LSTM, a suitable representation of system logs is necessary. The fact that log data usually consists partly of natural language suggests to treat them as such. Section \ref{sec:nlp_general_concept} gives a short general introduction to the concept of natural language processing, while section \ref{sec:nlp_word_embeddings} describes the core idea of transforming natural language into a format that can be used for further analysis. Section \ref{Bert} gives an overview of how Bert, a state-of-the-art language model, executes this transformation.
 
+\subsection{General concept \label{sec:nlp_general_concept}}
 Natural language processing (NLP) involves the engineering of computational models to solve practical problems in understanding human languages. Having initially relied on processing involving statistics, probability and machine learning, the recent boost in available computational power with GPUs, allowed deep learning to raise the bar for many NLP-tasks. NLP can be broadly divided into two categories, namely \textit{base concepts} which deal with the fundamentals of understanding language, and concrete applications by means of these very concepts, although the border between the two is often fluent. Base concepts include \textit{language modelling}, \textit{morphological processing} (find segments within words), \textit{syntactic processing} (how different words and phrases relate to each other within a sentence) and \textit{semantic processing} (understanding the meaning of words), whereas applications include areas such as text translation, classification of documents, summarisation of texts, extraction of information and many more.
-\subsection{Word embeddings}
+\subsection{Word embeddings \label{sec:nlp_word_embeddings}}
 Language modelling can be viewed as an essential piece of probably any practical application of NLP. Generally speaking, it involves creating a model to predict words given previous words by finding appropriate representations for words through analysing the relations of words within their context. Numeric vectors, which represent single words, obtained by language model techniques are called \textit{word embeddings} \cite{otter2020survey}. For example, the word "Olympics" appears often in the context or close to words like "athlete", "running" or "tournament" but rather rarely next to words like "microphysics" or "chicken". These relationships can be translated into a vector that describes how the word "Olympics" is used within a language \cite{mittechnologyreviewkingqueen}. Word embeddings can be retreived either by Principle Component Analysis or by using deep neural network models and capturing their internal states.
 \subsection{Bert \label{Bert}}
 The functionality of a language representation model will be outlined on the basis of Bert (\textbf{B}idirectional \textbf{E}ncoder \textbf{R}epresentations from \textbf{T}ransformers) by Devlin et al. \cite{devlin2018bert}. The model architecture is a multi-layer bidirectional Transformer encoder. The encoder maps an input sequence of symbol representations to a sequence of continuous representations. The transformer architecture introduces self-attention and fully connected layers on top of the encoder structure, which has been shown to be superior in quality and is significantly cheaper to train \cite{vaswani2017attention}.
@@ -225,7 +234,8 @@ Log messages are the result of the insertion of a variable part in a logging ins
 
 
 \section{Log Parsing \label{sec:backgroundlogparsing}}
-Due to the unstructured nature of log data, the first crucial step in anomaly detection on log data is parsing. Raw log messages consist of a constant and a variable part, with the constant part remaining identical for every occurrence, while the variable part records runtime information and varies among different event occurrences. The goal of log parsing is to separate the \textit{constant} and \textit{variable} part of a raw log message \cite{he2017towards}\cite{zhu2019tools}. Figure \ref{fig:parsing} shows how logging statements from Java source code are parsed. The logging statements variable parts \verb!block!, \verb!block.getNumBytes()! and \verb!inAddr! are dynamically interpreted at runtime and replaced by their respective values. The resulting log message is then printed with additional customisable values (timestamp, logging level and component) by the respective logging framework. The structured log is then produced by the log parser, separating the constant part, which is also called a \textit{template} (\verb!Received block <*> of size <*> from /<*>!) from the variable parts (\verb!blk_-562725280853087685, 67108864! and \verb!10.251.91.84!), replacing the variable parts inside the constant parts with a pre-defined token - "\verb!<*>!" in this example.
+Due to the unstructured nature of system log data, a log parser has to be utilised on the logs, a crucial step in order to be able to transform them into word embeddings as described in \ref{sec:natural-language-processing}.
+Raw log messages consist of a constant and a variable part, with the constant part remaining identical for every occurrence, while the variable part records runtime information and varies among different event occurrences. The goal of log parsing is to separate the \textit{constant} and \textit{variable} part of a raw log message \cite{he2017towards}\cite{zhu2019tools}. Figure \ref{fig:parsing} shows how logging statements from Java source code are parsed. The logging statements variable parts \verb!block!, \verb!block.getNumBytes()! and \verb!inAddr! are dynamically interpreted at runtime and replaced by their respective values. The resulting log message is then printed with additional customisable values (timestamp, logging level and component) by the respective logging framework. The structured log is then produced by the log parser, separating the constant part, which is also called a \textit{template} (\verb!Received block <*> of size <*> from /<*>!) from the variable parts (\verb!blk_-562725280853087685, 67108864! and \verb!10.251.91.84!), replacing the variable parts inside the constant parts with a pre-defined token - "\verb!<*>!" in this example.
 
 Log parsing is usually the first step in order to perform a log analysis task. Log parsing enables enables searching, filtering, grouping and mining of logs. Applications include usage analysis at Twitter \cite{lee2012unified} or workload modelling \cite{barham2004using}. Logs can also be used as data sources for performance modelling \cite{chow2014mystery} where performance improvements of a system can be validated using log data. A very prominent application of log parsing is anomaly detection. Since logs record execution information of a system, they are a valuable data source for identifying abnormal behaviour of a system \cite{zhu2019tools}.
 

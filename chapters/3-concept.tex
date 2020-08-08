@@ -17,14 +17,14 @@ Logs are print statements inside programs which are defined by a fixed sequence 
 A log is a sequence of ASCII characters, which is denoted by the set $\mathcal{A}$ that form unstructured messages $M = (m_0, m_1, ..., m_n)$ with every character of $m_i \in \mathcal{A}$. Log messages consist of tokens - most tokens are English words, but do also include special characters. The number of tokens from which a log message can consist of, varies. 
 Let $g: \mathcal{A}^i \rightarrow \mathbb{R}^w$ be a function that takes a variable length of $i$ tokens that make up a log message and maps them to a fixed length vector of dimension $w$. This is the function which represents the computation of embeddings. $E = (e_0, e_1, ..., e_n)$ is the sequence of vectors based on $M$, parsed and transformed into embedding representations. Let $\mathcal{B} = (b_0, b_1, ..., b_n)$ be the dataset where every $b_i \in {0,1}$ denotes if the log event represented by $e_i$ is anomalous $(1)$ or not $(0)$. $\hat{b_i}$ denotes the system's prediction for $b_i$.
 
-\textit{Multi-classification}: For every distinct log template, we assign $C = \{c_0, c_1, ..., c_k\}$ to be the set of distinct class keys. Let $g: \left|s\right| \times \mathbb{R}^w \rightarrow \mathbb{N},\;  g(E_i, \Psi) = \mathbb{R}^k$ be a function computed by a neural network, that given a subsequence of $s$ vectors out of the dataset $E$, namely $E_i = (e_i, ..., e_{i+s})$, returns a probability distribution $Pr_i[e_{i+s+1}|E_i]$ = $(c_0: p_0, c_1: p_1, ..., c_k: p_k)$, describing the probability for each template class from $C$ to appear as the next class at index $i+s+1$, given $E_i$. The objective is to learn the parameters $\Psi$, so that for each fixed length sequence of vectors, the function predicts the correct subsequent class. If one of the top $q$ candidate classes matches the actual class, then $\hat{b_i} = 0$ is returned, if it does not match the actual class, $\hat{b_i} = 1$ is returned.
+\textit{Classification}: For every distinct log template, we assign $C = \{c_0, c_1, ..., c_k\}$ to be the set of distinct class keys. Let $g: \left|s\right| \times \mathbb{R}^w \rightarrow \mathbb{N},\;  g(E_i, \Psi) = \mathbb{R}^k$ be a function computed by a neural network, that given a subsequence of $s$ vectors out of the dataset $E$, namely $E_i = (e_i, ..., e_{i+s})$, returns a probability distribution $Pr_i[e_{i+s+1}|E_i]$ = $(c_0: p_0, c_1: p_1, ..., c_k: p_k)$, describing the probability for each template class from $C$ to appear as the next class at index $i+s+1$, given $E_i$. The objective is to learn the parameters $\Psi$, so that for each fixed length sequence of vectors, the function predicts the correct subsequent class. If one of the top $q$ candidate classes matches the actual class, then $\hat{b_i} = 0$ is returned, if it does not match the actual class, $\hat{b_i} = 1$ is returned.
 
 \textit{Regression}: Let $h: \left|s\right| \times \mathbb{R}^w \rightarrow \mathbb{R}^w, \; h(e_i, s, \Phi)=d$ be a function computed by a neural network, that based on a sequence of $s$ vectors $E = (e_j, ..., e_{j+s})$ predicts the vector $d$ at index $j+s+1$. The objective in this case is to learn parameters $\Phi$, so that the system predicts the vector following the sequence of vectors of length $s$. If the distance between the predicted vector $d$ and the actual vector $e_{j+s+1}$ is above or below certain threshold values, which will be computed by the q-th percentile of all loss values from the original dataset, then $\hat{b_i} = 1$ is returned, if it is inside these thresholds, then $\hat{b_i} = 0$ is returned.
 
 \subsection{Requirements and Assumptions \label{sec:requirements_and_assumptions}}
 \begin{enumerate}
-	\item The model requires a word vectors by a language model that has been pre-trained on a sufficiently large corpus.
-	\item The model requires \textit{normal} log data, which does not contain anomalies for training.
+	\item The model requires word vectors that are computed by a language model that has been pre-trained on a sufficiently large corpus.
+	\item The model requires \textit{normal} log data, which do not contain anomalies for training.
 	\item The model is not able to detect anomalies which are only in the variable part of the log messages. The model only considers the templates, i.e. keys.
 \end{enumerate}
 
@@ -68,9 +68,6 @@ After the aforementioned pre-processing steps, the log events are transformed in
 	\item Tolerance: Word embeddings should capture the similarity between different log events with same or very similar semantics. For example, the log event pair "\verb!<*>! \verb!Creating image!" is changed to "\verb!<*> Image created successfully!" or "\verb!VM up!" is changed to "\verb!VM started!". This in turn should result in a low cosine distance \cite{zhang2019robust}.
 \end{itemize}
 
-In order to compare the impact of the choice of a language model, two main approaches are implemented.
-
-\subsubsection{Transformer-based Language Models \label{transformer-approach}}
 In oder to be able to compare the quality different language model's word embeddings with regards to the task of anomaly detection, it is possible to easily swap the used language model for log event transformation. For this work, the pre-trained language models used for evaluation, are Bert, GPT-2 and XL-Transformers.
 
 
@@ -108,7 +105,7 @@ Just like for the insertion of alterations on the log events themselves, it is d
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=13cm,height=15cm,keepaspectratio]{change_sequences.pdf}
+	\includegraphics[width=13cm,height=15cm,keepaspectratio]{change_sequences.png}
 	\caption{Altering log sequences.}
 	\label{fig:changesequence}
 \end{figure}
@@ -119,7 +116,7 @@ Just like for the insertion of alterations on the log events themselves, it is d
 \section{Prediction Model\label{sec:prediction_model}}
 
 \subsection{LSTM Model\label{sec:lstm-model}}
-Through the aforementioned steps in \ref{sec:pre_processing}, all log events are transformed into word embeddings $e_i \in \mathbb{R}^w$. In order to learn sequences of logs, $s$ embeddings are concatenated to form an embedding sequence $E$. Taking a sequence of embeddings as input, a \textit{Bi-LSTM} neural network as described in \ref{sec:lstm} and \ref{sec:bi-lstm} is utilised to predict the class or embedding at position $s+1$. Figure \ref{fig:lstm_model} shows the structure of the Bi-LSTM. As a first step, a dropout is applied to the input sequence, which randomly drops out information in order to reduce overfitting and improve generalisation, before feeding it to the forward and backward layers of the Bi-LSTM. Then, the outputs of the Bi-LSTM are again fed into a dropout layer, followed by a fully connected layer, which reduces the output of the LSTM into the desired dimensions, i.e. $\mathbb{R}^w$ for regression and number of classes $c$ for multi-classification. Finally, an activation function $f$ is applied to the last output $o_{s_+1}$, log-softmax for multi-classification and linear for regression, respectively, in order to obtain the model's prediction $p_{s+1}$.
+Through the aforementioned steps in \ref{sec:pre_processing}, all log events are transformed into word embeddings $e_i \in \mathbb{R}^w$. In order to learn sequences of logs, $s$ embeddings are concatenated to form an embedding sequence $E$. Taking a sequence of embeddings as input, a \textit{Bi-LSTM} neural network as described in \ref{sec:lstm} and \ref{sec:bi-lstm} is utilised to predict the class or embedding at position $s+1$. Figure \ref{fig:lstm_model} shows the structure of the Bi-LSTM. As a first step, a dropout is applied to the input sequence, which randomly drops out information in order to reduce overfitting and improve generalisation, before feeding it to the forward and backward layers of the Bi-LSTM. Then, the outputs of the Bi-LSTM are again fed into a dropout layer, followed by a fully connected layer, which reduces the output of the LSTM into the desired dimensions, i.e. $\mathbb{R}^w$ for regression and number of classes $c$ for classification. Finally, an activation function $f$ is applied to the last output $o_{s_+1}$, log-softmax for classification and linear for regression, respectively, in order to obtain the model's prediction $p_{s+1}$.
 
 
 \begin{figure}[H]
@@ -130,7 +127,7 @@ Through the aforementioned steps in \ref{sec:pre_processing}, all log events are
 \end{figure}
 
 \subsection{Classification \label{sec:classification}}
-For the multi-classification approach, the finite set of $n$ unique log event templates is mapped to class indices $(c \in \mathbb{N}^{+}: c \leq n)$. Training of the neural network is then performed on original log data that does not contain anomalies.
+For the classification approach, the finite set of $n$ unique log event templates is mapped to class indices $c_0, ..., c_n$. Training of the neural network is then performed on original log data that does not contain anomalies.
 \begin{itemize}
 \setlength\itemsep{-0.5em}
 	\item The \textit{input} values of the training data have the dimensions $n$, $s$ and $w$, with $n$ being the number of unique log events, $s$ being the length of the sequence of word embeddings for which the neural network shall learn the consequent class and $w$ being the dimensionality of the log event embeddings.
@@ -139,7 +136,7 @@ For the multi-classification approach, the finite set of $n$ unique log event te
 
 After training has been executed on dataset A, the prediction phase starts, where a dataset B containing anomalies and alterations, as described in \ref{sec:logs_alteration}, can be processed by the neural network. For a new incoming dataset B, the system first has to match every template to the template classes of dataset A. For every template in dataset B, the nearest neighbour out of the templates of dataset A is determined and will get the respective class assigned, as depicted in figure \ref{fig:label_mapping}. This means in particular, that for every unique template, the corresponding word embedding is retrieved, and then every one of the word embeddings of dataset B is mapped to the word embedding from dataset A with the lowest cosine distance. Additionally, a threshold has to be found, so that if for a given word embedding in dataset B, no corresponding word embedding with a cosine distance below this threshold is found, that template shall not get a class assigned, this would otherwise lead to a situation where the log event \textit{"System restarted"} gets mapped to any of dataset A's template classes, which is not desirable behaviour.
 
-After the matching process is finished, the system can read in the sequences of log events of dataset B. For every sequence of log events $S_i$ of length $s$, the system returns a probability distribution $Pr[c_{s+i+1}|S_i] = \{c_1 : p_1, c_2 : p_2, ..., c_n : p_n\}$ that denotes the probability of each log template class to appear as the consequent one. It is possible, that there are multiple candidates for the following template. For example, if the system is attempting to terminate an instance, then the corresponding template to class $c_{s+i+1}$ could be either '\textit{Instance terminated successfully}' or '\textit{Waiting for instance to terminate}'. The possible template classes $c_i$ are sorted based on their probabilities. A predicted template class is considered normal, if it is among the top $g$ candidates. It is marked as anomalous otherwise.
+After the matching process is finished, the system can read in the sequences of log events of dataset B. For every sequence of log events $S_i$ of length $s$, the system returns a probability distribution $Pr[c_{s+i+1}|S_i] = \{c_0 : p_o, c_1 : p_1, ..., c_n : p_n\}$ that denotes the probability of each log template class to appear as the subsequent one. It is possible, that there are multiple candidates for the following template. For example, if the system is attempting to terminate an instance, then the corresponding template to class $c_{s+i+1}$ could be either '\textit{Instance terminated successfully}' or '\textit{Waiting for instance to terminate}'. The possible template classes $c_i$ are sorted based on their probabilities. A predicted template class is considered normal, if it is among the top $g$ candidates. It is marked as anomalous otherwise.
  
 
 \begin{figure}[H]
@@ -158,7 +155,7 @@ After the matching process is finished, the system can read in the sequences of 
 \end{figure}
 
 \subsection{Regression \label{sec:regression}}
-For the regression approach, the neural network is trained to solve a regression task, with the input values of the training data being structured as described in \ref{sec:classification}, while the corresponding target value for the sequence of embeddings $E_i = (e_i, ..., e_{i+s})$ is the embedding of the log event at position $i+s+1$, meaning the neural network shall predict the next embedding $e_{i+s+1}$. After training on the original dataset, the mean squared error loss of every target word vector at position $i+s+1$ of the corresponding input sequence $E_i$, and the neural network's predicted word vector, is computed. Afterwards, the \textit{q-th} percentile of the agglomerated loss values of the original dataset is computed. The optimal value \textit{q} for the following purpose is to be determined by a simple grid-search. For the sequences of the manipulated test dataset, the loss values are computed in the same way as for the original dataset. The system will then mark every log event whose word embedding's loss value is above the calculated \textit{q-th} percentile as an anomaly (1), otherwise as non anomalous (0). This is depicted in figure \ref{fig:regression_with_threshold}.
+For the regression approach, the neural network is trained to solve a regression task, with the input values of the training data being structured as described in \ref{sec:classification}, while the corresponding target value for the sequence of embeddings $E_i = (e_i, ..., e_{i+s})$ is the embedding of the log event at position $i+s+1$, meaning the neural network shall predict the next embedding $e_{i+s+1}$. After training on the original dataset, the mean squared error loss of every target word vector at position $i+s+1$ of the corresponding input sequence $E_i$, and the neural network's predicted word vector, is computed. Afterwards, the \textit{q-th} percentile of the agglomerated loss values of the original dataset is computed. The optimal value \textit{q} for the following purpose is to be determined by performing a grid-search. For the sequences of the manipulated test dataset, the loss values are computed in the same way as for the original dataset. The system will then mark every log event whose word embedding's loss value is above the calculated \textit{q-th} percentile as an anomaly (1), otherwise as non anomalous (0). This is depicted in figure \ref{fig:regression_with_threshold}.
 
 \begin{figure}[htb]
   \centering
@@ -169,7 +166,7 @@ For the regression approach, the neural network is trained to solve a regression
 
 
 \section{Transfer Learning \label{sec:transferlearning}}
-Transfer learning is the main focus of this work. It builds upon the aforementioned techniques and uses them to develop an infrastructure-agnostic anomaly detection model. With the help of these techniques, frequent re-training of models can be avoided and models trained on one dataset can be ported to be used with different datasets. The way transfer learning is executed differs from the classification approach, which is further outlined in \ref{sec:transfer_classification} and the regression approach, explained in \ref{sec:transfer_regression}. 
+Building upon the steps described in the previous subsections, allows to develop an infrastructure-agnostic anomaly detection model. With the help of the described techniques, frequent re-training of models can be avoided and models trained on one dataset can be ported to be used with different datasets. The way transfer learning is executed differs from the classification approach, which is further outlined in \ref{sec:transfer_classification} and the regression approach, explained in \ref{sec:transfer_regression}. 
 
 \begin{figure}[H]
 	\centering
@@ -194,14 +191,6 @@ For transfer learning using the regression-based approach, the model is first tr
 \end{figure}
 
 
-\section{Possible Improvements and Extendibility\label{sec:improvements}}
-In this section, possible improvements for the model are identified. 
-
-In order to have more ways of evaluating different language models, next to the regression and multi-classification approach, a binary classification approach can be implemented.
-
-To make the LSTM model more robust to alterations in a dataset, the attention mechanism, as described by Vaswani et al. \cite{vaswani2017attention} could be adopted.
-
-The word embeddings are taken from the used language models as they are. Finetuning on the log corpora is only conducted using the default tasks that have been used to train the language model on extremely large corpora. The corpora on log data are likely to be too small. Even though most log events are sentences in English, they use very reduced idioms. A deeper investigation on how to train the language model specifically on the task of anomaly detection could potentially be useful in order to obtain better results.
 
 
 

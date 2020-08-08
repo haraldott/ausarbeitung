@@ -1,6 +1,6 @@
 \chapter{Results\label{cha:results}}
 
-In the following chapter, the achieved results of the model are presented. The described approaches are evaluated with regards to the common metrics precision, recall, and F1-Score. Different hyperparameter-setups are discussed and visualised in graphs. In particular, the language models Bert, XL-Transformers and GPT-2 as described in \ref{transformer-approach} are compared. Additionally, the regression-based method as described in \ref{sec:regression} and the multi-classification method as described in \ref{sec:classification} are compared, showing advantages or disadvantages among each other.
+In the following chapter, the achieved results of the model are presented. The described approaches are evaluated with regards to the common metrics precision, recall, and F1-Score. Different hyperparameter-setups are discussed and visualised in graphs. In particular, the language models Bert, XL-Transformers and GPT-2 as described in \ref{sec:word_vectorization} are compared. Additionally, the regression-based method as described in \ref{sec:regression} and the classification method as described in \ref{sec:classification} are compared, showing advantages or disadvantages among each other.
 
 In section \ref{sec:experimental_setup} details about the used hardware and technologies are listed, followed by section \ref{sec:evaluation} in which the results of the evaluation are presented. Finally, in section \ref{sec:discussion_results} the results of the evaluation are discussed.
 
@@ -8,7 +8,7 @@ In section \ref{sec:experimental_setup} details about the used hardware and tech
 \section{Experimental Setup\label{sec:experimental_setup}}
 In this section, the used hardware, libraries, the dimensions of the word embeddings for every language model and the used log dataset are described.
 
-\subsection{Hardware and library specifications}
+\subsection{Hardware and Library Specifications}
 The machine that was used to conduct the experiments has the following specifications:
 \begin{itemize}
 	\item Intel(R) Core(TM) i5-9600K CPU @ 3.70GHz
@@ -53,8 +53,8 @@ In order to examine the ability of the model to transfer the knowledge obtained 
 
 \section{Evaluation\label{sec:evaluation}}
 In this section, the results of the evaluation between the two anomaly detection approaches, namely the regression-based approach and the classification-based approach are compared using three different language models, namely Bert, XL-Transformers and GPT-2. The pre-processing steps string cleansing and finetuning, as described \ref{sec:pre_processing} are investigated with regards to their potential on benefiting the quality of the word embeddings. Subsequently, the results of the evaluation using one dataset and the transfer learning approach are presented.
-\subsection{Pre-Processing}
-\subsubsection{String cleansing}
+
+\subsection{String cleansing}
 String cleansing, as described in \ref{sec:template_cleansing}, can potentially  improve distinguishability between templates drastically in the used dataset.
 For Bert, the pairwise cosine distances before cleansing are depicted in figure \ref{fig:bert_before_cleansing}, after cleansing in figure \ref{fig:bert_after_cleansing}. The corresponding templates to the indices on the x and y axes before and after cleansing can be found in table \ref{tab:templates_before_cleansing} and table \ref{tab:templates_after_cleansing} respectively.
 The cosine distances before and after cleansing for GPT-2 can be found in figure \ref{fig:gpt_before_cleansing} and figure \ref{fig:gpt_after_cleansing}, and for XL-Transformer in figure \ref{fig:xl_before_cleansing} and figure \ref{fig:xl_after_cleansing}, respectively. The average pairwise cosine distances between templates before and after cleansing can be seen in table \ref{tab:average_pairwise_cos_distances}.
@@ -172,7 +172,7 @@ Index & Template \\
 \end{small}
 \end{table}
 
-\subsubsection{Finetuning}
+\subsection{Finetuning}
 As described in \ref{sec:finetuning}, finetuning can potentially help to produce word embeddings that are more adequate for solving a certain task, it is thus desirable to produce word embeddings that help solving the task of anomaly detection better. As described in \ref{sec:word_vectorization}, a high cosine distance between semantically different templates is required. The dataset that consists of the templates in table \ref{tab:templates_after_cleansing} has been chosen for finetuning. Since the pre-trained language models at hand (namely \textit{bert-base-uncased} and \textit{gpt2}) have been trained on a large corpus, finetuning would also need to be executed on a sufficiently large corpus. Since this is not the case, the results of finetuning for a maximum of four epochs, as suggested by the Bert authors \cite{devlin2018bert}, does not yield the desired results. As it can be seen in figure \ref{fig:cos_distance_finetuning}, it was not possible to increase the cosine distances between templates on the task of Masked LM (as described in \ref{Bert}), compared to the cosine distances depicted in figure \ref{fig:bert_after_cleansing}. The average distance between templates dropped to 0.3016 from 0.4449. The fact that the loss on the evaluation part of the dataset is not decreasing adequately, as shown in figure \ref{fig:finetuning_loss}, shows that training on such a small corpus is not able to generalise well enough, which makes finetuning on the default learning task not useful in this case. Since the Huggingface Transformers library does not offer out of the box finetuning interfaces for GPT-2 and XL-Transformers on the same task as for Bert, they are not further investigated for finetuning.
 
 \begin{figure}[H]
@@ -190,7 +190,7 @@ As described in \ref{sec:finetuning}, finetuning can potentially help to produce
 \end{figure}
 
 
-\subsubsection{Hyperparameters}
+\subsection{Hyperparameters}
 In order to find well-suited parameters for the LSTM model, it was first applied to the problem using a minimal configuration. With the help of a grid-search, running simulations with different configurations, the following hyperparameters have proven to yield the most satisfying results:
 \begin{itemize}
 	\item 512 hidden units for the bidirectional LSTM, with one layer
@@ -203,19 +203,21 @@ In order to find well-suited parameters for the LSTM model, it was first applied
 %%%%%%%%%%%%
 % REGRESSION 
 %%%%%%%%%%%%
-\subsection{Evaluation of the regression-based approach using one dataset\label{sec:results-regression}}
-In this subsection, the results of the regression-based approach, with various alterations using the different language models, are presented. In order to evaluate the robustness of the language models to the evolution of log events, alterations as described in \ref{sec:logs_alteration} are injected at different ratios. The impact on detecting injected anomalies after alterations on the sequence of logs are injected, i.e. deleting, shuffling and duplicating events are summarised in figure \ref{fig:results_regression_sequential}. Alterations are not injected all at the same time, but independently from each other, the results in the figures are average values of all experiments with alterations on the log sequences. Results broken down by each alteration can be found in the appendix \ref{appendix:regression}. It is evident, that GPT-2 performs better than Bert and XL-Transformers on both the F1-score and precision. Yet, when the \textit{reverse order} alteration is injected, which reverses all the log events per instance id block and therefore marks every line as an anomaly, in order to evaluate the ability of the model to learn sequences, the results are different. The metrics for this experiment are visualised in figure \ref{fig:regression_reverse_order}.
+\subsection{Regression-based approach using one dataset\label{sec:results-regression}}
+In this subsection, the results of the regression-based approach, with various alterations using the different language models, are presented. In order to evaluate the robustness of the language models to the evolution of log events, alterations as described in \ref{sec:logs_alteration} are injected at different ratios. The impact on detecting injected anomalies after alterations on the sequence of logs are injected, i.e. deleting, shuffling and duplicating events are summarised in figure \ref{fig:results_regression_sequential}. Alterations are not injected all at the same time, but independently from each other, the results in the figures are average values of all experiments with alterations on the log sequences. Results broken down by each alteration can be found in the appendix \ref{appendix:regression}. It is evident, that GPT-2 performs better than Bert and XL-Transformers on both the F1-score and precision.
 
 In contrast to the alterations on the log sequences, alterations on the log events themselves, i.e. inserting, removing and replacing words are also of interest. The results of this experiment can be seen in figure \ref{fig:results_regression_words}. Again, the alterations are not injected all at once, but independently - the figure shows averaged results.
 
 Another aspect that is evaluated, is the impact of the input sequence length, i.e. the number of concatenated log events for which the next log event shall be predicted, on the ability of the model to detect anomalies. The results of this evaluation can be seen in \ref{fig:seq_len_regression}. Bert and GPT-2 seem to profit slightly from sequence lengths longer than 6 or 7, whereas the quality of results for XL-Transformers are not as affected from the input sequence length, but are generally lower.
 
+\begin{comment}
 \begin{figure}[h]
   \centering
   \includegraphics[width=6cm,height=4.5cm]{results/regression_sequence/regression_reverse.png}\\
   \caption{Scores for detecting reversed order of log events, using regression.}
   \label{fig:regression_reverse_order}
 \end{figure}
+\end{comment}
 
 \begin{figure*}[ht!]
    \subfloat[5\% alteration\label{fig:results_regression_sequential_5}]{%
@@ -261,24 +263,24 @@ Another aspect that is evaluated, is the impact of the input sequence length, i.
 %%%%%%%%%%%%%%%%
 % CLASSIFICATION 
 %%%%%%%%%%%%%%%%
-\subsection{Classification \label{sec:results-classification}}
+\subsection{Classification-based approach using one dataset \label{sec:results-classification}}
 In this subsection, the results of the classification-based approach are presented, with the exact same boundary conditions as in \ref{sec:results-regression}. 
 The ability of the system to detect injected anomalies, despite injected alterations on the sequences of logs, can be seen in \ref{fig:results_multiclass_sequential}. 
 The impact of alterations on the sequence of logs, i.e. deleting, shuffling and duplicating events are summarised in figure \ref{fig:results_regression_sequential}. Again, only average results on the individual injections are presented. Results broken down by each alteration can be found in the appendix \ref{appendix:classification}. 
 
-In contrary to the results using regression, the classification approach seems most fit for Bert and much less for GPT-2. This is probably due to the smaller cosine distance between the templates in GPT-2, which makes it harder for the system to correctly assign the templates to the classes in the prediction process. Yet, for the reverse order injection, which can be seen in figure \ref{fig:multiclass_reverse_order}, the results are better for GPT-2, than with the regression approach.
+In contrary to the results using regression, the classification approach seems most fit for Bert and much less for GPT-2. This is probably due to the smaller cosine distance between the templates in GPT-2, which makes it harder for the system to correctly assign the templates to the classes in the prediction process.
 
 Additionally to the alterations on the log sequences, the results alterations on the log events themselves, i.e. inserting, removing and replacing words are of interest. The results of this experiment can be seen in figure \ref{fig:results_multiclass_sequential}. Again, the alterations are not injected all at once, but independently - the figure shows averaged results.
 
 The impact of the input sequence length can be seen in \ref{fig:seq_len_regression}. Bert again seems to profit slightly from sequence lengths longer than 6 or 7, whereas the quality of results for XL-Transformers and GPT-2 seem to have a tendency to degrade in prediction quality for longer input sequence lengths.
 
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=6cm,height=4.5cm]{results/classification_sequence/multiclass_reverse.png}\\
-  \caption{Scores for detecting reversed order of log events, using classification.}
-  \label{fig:multiclass_reverse_order}
-\end{figure}
+%\begin{figure}[h]
+%  \centering
+%  \includegraphics[width=6cm,height=4.5cm]{results/classification_sequence/multiclass_reverse.png}\\
+%  \caption{Scores for detecting reversed order of log events, using classification.}
+%  \label{fig:multiclass_reverse_order}
+%\end{figure}
 % multiclass sequential
 \begin{figure*}[ht!]
    \subfloat[5\% alteration\label{fig:results_multiclass_sequential_5}]{%
@@ -289,7 +291,7 @@ The impact of the input sequence length can be seen in \ref{fig:seq_len_regressi
 \hspace{\fill}
    \subfloat[15\% alteration\label{fig:results_multiclass_sequential_15}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/average/multiclass_sequential_average_ratio_0.15.png}}\\
-\caption{\label{fig:results_multiclass_sequential}Altering log lines at different ratios, using classification, 5\% anomaly.}
+\caption{\label{fig:results_multiclass_sequential}Altering log sequences at different ratios, using classification, 5\% anomaly.}
 \end{figure*}
 
 %multiclass qualitative
@@ -319,21 +321,22 @@ The impact of the input sequence length can be seen in \ref{fig:seq_len_regressi
 %%%%%
 
 %%%%%%% TRANSFER LEARNING
-\subsection{Transfer Learning\label{sec:results_transfer}}
-In this subsection, the results of the transfer learning experiment are presented, using the classification-based approach in \ref{sec:results-classification-transfer} and the regression-based approach in \ref{sec:results-regression-transfer}.
+%\subsection{Transfer Learning\label{sec:results_transfer}}
+%In this subsection, the results of the transfer learning experiment are presented, using the classification-based approach in \ref{sec:results-classification-transfer} and the regression-based approach in \ref{sec:results-regression-transfer}.
 
 
-\subsubsection{Transfer learning using the regression-based approach \label{sec:results-regression-transfer}}
+\subsection{Transfer learning using the regression-based approach \label{sec:results-regression-transfer}}
 
-As described in \ref{sec:transfer_learning_setup}, the alterations that were injected separately in the experiments on one dataset in the last section, are now injected all at once, to simulate a different dataset. Figure \ref{fig:results_transfer_regression} shows the results for alterations on 5\%, 10\% and 15\% of the log lines of all possible alterations at the same time, after 60 epochs of training on dataset A and 5 epochs of training on dataset B. It is clearly visible, that Bert and XL-Transformers are both degrading substantially in all metrics, yet GPT-2 achieves good results even with an increased alteration ratio. Figure \ref{fig:regression_transfer_reverse} shows the results for reversing the order of events, with Bert and XL-Transformers achieving F1-Scores of 0.79 and 0.89 respectively, precision scores of 1.0, but GPT-2 achieving an unsatisfying F1-Score of 0.23, while still achieving a precision score of 1.0.
+As described in \ref{sec:transfer_learning_setup}, the alterations that were injected separately in the experiments on one dataset in the last section, are now injected all at once, to simulate a different dataset. Figure \ref{fig:results_transfer_regression} shows the results for alterations on 5\%, 10\% and 15\% of the log lines of all possible alterations at the same time, after 60 epochs of training on dataset A and 5 epochs of training on dataset B. It is clearly visible, that Bert and XL-Transformers are both degrading substantially in all metrics, yet GPT-2 achieves good results even with an increased alteration ratio.
 
-
+\begin{comment}
 \begin{figure}[h]
   \centering
   \includegraphics[width=6cm,height=4.5cm]{results/transfer/transfer_regression_reverse.png}\\
   \caption{Scores for detecting reversed order of log events for transfer learning, using regression.}
   \label{fig:regression_transfer_reverse}
 \end{figure}
+\end{comment}
 
 \begin{figure*}[ht!]
    \subfloat[5\% alteration\label{fig:results_transfer_regression_0.05}]{%
@@ -378,19 +381,18 @@ Figure \ref{fig:results_transfer_regression_per_epoch} depicts the development o
 
 
 %%%% TRANSFER LEARNING CLASSIFICATION
-\subsubsection{Transfer learning using the classification-based approach \label{sec:results-classification-transfer}}
+\subsection{Transfer learning using the classification-based approach \label{sec:results-classification-transfer}}
 
 For transfer learning using the classification-based approach, the same experiments as described in \ref{sec:results-regression-transfer} were conducted. Figure \ref{fig:results_transfer_classification} shows the results of the transfer learning experiment. Interesting observations include the stable results achieved using Bert, which are little sensitive to increasing alteration ratios and the results of GPT-2, which are not as useful as compared to the regression-based approach.
-Figure \ref{fig:results_transfer_multiclass_per_epoch} depicts the development of the metrics of detecting anomalies for every additional epoch of training on dataset B. Bert improves the most per epoch, ramping up steeply after epoch 5 is completed, GPT-2 stays almost the same and XL-Transformers has small improvements over the course of the 5 epochs. These findings are confirmed by the ROC curve plots which can be seen in figure \ref{fig:results_transfer_multiclass_roc}, showing very good results for Bert, acceptable results for Xl-Transformers and far less satisfying results for GPT-2. Yet, figure \ref{fig:classification_transfer_reverse} shows, that for the classification approach, when reversing the order of log events, all three language models achieve perfect detection scores of 1.0 for every metric.
+Figure \ref{fig:results_transfer_multiclass_per_epoch} depicts the development of the metrics of detecting anomalies for every additional epoch of training on dataset B. Bert improves the most per epoch, ramping up steeply after epoch 5 is completed, GPT-2 stays almost the same and XL-Transformers has small improvements over the course of the 5 epochs. These findings are confirmed by the ROC curve plots which can be seen in figure \ref{fig:results_transfer_multiclass_roc}, showing very good results for Bert, acceptable results for Xl-Transformers and far less satisfying results for GPT-2.
 
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=6cm,height=4.5cm]{results/transfer/transfer_classification_reverse.png}\\
-  \caption{Scores for detecting reversed order of log events for transfer learning, using classification.}
-  \label{fig:classification_transfer_reverse}
+%\begin{figure}[h]
+%  \centering
+%  \includegraphics[width=6cm,height=4.5cm]{results/transfer/transfer_classification_reverse.png}\\
+%  \caption{Scores for detecting reversed order of log events for transfer learning, using classification.}
+%  \label{fig:classification_transfer_reverse}
   
-\end{figure}
+%\end{figure}
 \begin{figure*}[ht!]
    \subfloat[5\% alteration\label{fig:results_transfer_classification_0.05}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/transfer/transfer_multiclass_0.05_ratio.png}}
@@ -437,9 +439,9 @@ By evaluating three different language models, it has been shown that the used w
 For anomaly detection on one dataset using the regression approach, GPT-2 shows strong results, with F1-Scores of 0.95 when altering 5\% of log sequences, and 0.93 when altering the log lines, the quality of the results don't degrade much, when alteration ratios are increased, where Bert and XL-Transformers show decreases of 0.1 to 0.2 percentage points when increasing the alteration ratio from 5\% to 15\%. Yet, when the log events are completely reversed, GPT-2 achieves an F1-Score of only 0.55, where Bert and XL achieve 0.98, almost perfectly detecting the wrong sequence of log events.
 \end{comment}
 
-For the regression approach on one dataset, GPT-2 beats the Bert and XL-Transformers clearly with regards to all metrics, doubts are risen, if it really learns sequences, when looking of the results of the reverse order experiment.
+For the regression approach on one dataset, GPT-2 beats Bert and XL-Transformers clearly with regards to all metrics.
 
-For the classification approach on one dataset on the other hand, GPT-2   shows weaker results than XL-Transformers and Bert. This is probably party due to the small cosine distance between the embeddings of the templates, where small changes on the templates can have a high impact already. Yet for the reverse order experiment, GPT-2 shows better results than the other two.
+For the classification approach on one dataset on the other hand, GPT-2   shows weaker results than XL-Transformers and Bert. This is probably party due to the small cosine distance between the embeddings of the templates, where small changes on the templates can have a high impact already.
 
 For the transfer learning approach, the results show a slightly different picture. Using the regression approach, GPT-2 is still ahead of the other two, while Bert seems to show better results than for detection on one dataset. 
 
