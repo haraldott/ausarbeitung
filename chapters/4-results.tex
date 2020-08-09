@@ -34,8 +34,25 @@ The machine that was used to conduct the experiments has the following specifica
 \end{itemize}
 
 \subsection{Anomaly Detection on one Dataset \label{sec:ad_one_ds_result}}
-For evaluating the model, the OpenStack datasets "normal log dataset 2" (referenced to as original dataset from now on) containing 137k log lines and the "log dataset having performance anomalies" containing 18k log lines (referenced to as test dataset from now on), provided by the DeepLog authors at the University of Utah are used \cite{utah_dataset}. The original dataset stems from logs from running multiple OpenStack instances for 20 hours and 13 minutes for the original dataset and 2 hours and 17 minutes for the test dataset on CloudLab \cite{cloudlab}. Since the test dataset contains anomalies which are only detectable by inspecting the parameters of the log events, as described in \ref{fig:parsing}, i.e. the variable part of the log event which is not visible in the template after parsing, anomalies are injected into the dataset, yielding a labeled dataset for testing. This is necessary due to the assumptions specified in \ref{sec:requirements_and_assumptions}.
+For evaluating the model, the OpenStack datasets "normal log dataset 2" (referenced to as original dataset from now on) containing 137k log lines and the "log dataset having performance anomalies" containing 18k log lines (referenced to as test dataset from now on), provided by the DeepLog authors at the University of Utah are used \cite{utah_dataset}. The original dataset stems from logs from running multiple OpenStack instances for 20 hours and 13 minutes for the original dataset and 2 hours and 17 minutes for the test dataset on CloudLab \cite{cloudlab}. Since the test dataset contains anomalies which are only detectable by inspecting the parameters of the log events, as described in \ref{fig:parsing}, i.e. the variable part of the log event which is not visible in the template after parsing, a total of 5\% of anomalies in relation to the total number of lines of the test dataset are injected into the test dataset, yielding a labeled test dataset for evaluation of the trained model. This is necessary due to the assumptions specified in \ref{sec:requirements_and_assumptions}. Table \ref{tab:test_train_ds} gives an overview of the amount of log lines per dataset. The number of \textit{raw lines} reflects the number of log lines in the dataset's initial state, while the number of \textit{lines ordered} specifies the number of log lines after 
 In order to assess the quality of the used word embeddings, log alterations are additionally injected into the dataset containing anomalies, in order to simulate the instability of logs as described in \ref{sec:logs_alteration}.
+
+\begin{table}[ht]
+\centering
+\begin{small}
+\begin{tabular}{ p{1.3cm} p{1.8cm} p{2.3cm} p{1.7cm}}
+\toprule
+Dataset & \#lines raw & \#lines ordered & Anomalies\\
+\midrule
+Train & 137k & 33k & 0\%\\
+Test & 18k & 5k & 5\%\\ 
+
+\bottomrule
+\end{tabular}
+\caption{Test and train dataset.}
+\label{tab:test_train_ds}
+\end{small}
+\end{table}
 
 
 \subsection{Transfer Learning \label{sec:transfer_learning_setup}}
@@ -220,6 +237,8 @@ Another aspect that is evaluated, is the impact of the input sequence length, i.
 \end{comment}
 
 \begin{figure*}[ht!]
+  \centering
+  \captionsetup{justification=centering}
    \subfloat[5\% alteration\label{fig:results_regression_sequential_5}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/average/regression_sequential_average_ratio_0.05.png}}
 \hspace{\fill}
@@ -228,11 +247,13 @@ Another aspect that is evaluated, is the impact of the input sequence length, i.
 \hspace{\fill}
    \subfloat[15\% alteration\label{fig:results_regression_sequential_15}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/average/regression_sequential_average_ratio_0.15.png}}\\
-\caption{\label{fig:results_regression_sequential}Altering log sequences at different ratios, using regression, 5\% anomaly.}
+\caption{\label{fig:results_regression_sequential}Altering the sequences of logs at different ratios, using regression.}
 \end{figure*}
 
 
 \begin{figure*}[ht!]
+  \centering
+  \captionsetup{justification=centering}
    \subfloat[5\% alteration\label{fig:results_regression_qualitative_5}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/average/regression_qualitative_average_ratio_0.05.png}}
 \hspace{\fill}
@@ -241,7 +262,7 @@ Another aspect that is evaluated, is the impact of the input sequence length, i.
 \hspace{\fill}
    \subfloat[15\% alteration\label{fig:results_regression_qualitative_15}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/average/regression_qualitative_average_ratio_0.15.png}}\\
-\caption{\label{fig:results_regression_words}Altering log lines at different ratios, using regression, 5\% anomaly.}
+\caption{\label{fig:results_regression_words}Altering log lines at different ratios, using regression.}
 \end{figure*}	
 
 %%%%%
@@ -252,7 +273,7 @@ Another aspect that is evaluated, is the impact of the input sequence length, i.
   \centering
   \captionsetup{justification=centering}
   \includegraphics[width=9cm,height=6.5cm]{results/seq_len/sequence_len_regression.png}\\
-  \caption{F1-Score for varying input sequence lengths, 15\% word insertion, 5\% anomaly, using regression.}
+  \caption{F1-Score for varying input sequence lengths, 15\% word insertion alterations, 5\% anomalies injected, using regression.}
   \label{fig:seq_len_regression}
 \end{figure}
 
@@ -283,6 +304,8 @@ The impact of the input sequence length can be seen in \ref{fig:seq_len_regressi
 %\end{figure}
 % multiclass sequential
 \begin{figure*}[ht!]
+  \centering
+  \captionsetup{justification=centering}
    \subfloat[5\% alteration\label{fig:results_multiclass_sequential_5}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/average/multiclass_sequential_average_ratio_0.05.png}}
 \hspace{\fill}
@@ -291,11 +314,13 @@ The impact of the input sequence length can be seen in \ref{fig:seq_len_regressi
 \hspace{\fill}
    \subfloat[15\% alteration\label{fig:results_multiclass_sequential_15}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/average/multiclass_sequential_average_ratio_0.15.png}}\\
-\caption{\label{fig:results_multiclass_sequential}Altering log sequences at different ratios, using classification, 5\% anomaly.}
+\caption{\label{fig:results_multiclass_sequential}Altering the order of log sequences at different ratios, using classification.}
 \end{figure*}
 
 %multiclass qualitative
 \begin{figure*}[ht!]
+  \centering
+  \captionsetup{justification=centering}
    \subfloat[5\% alteration\label{fig:results_multiclass_qualitative_5}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/average/multiclass_qualitative_average_ratio_0.05.png}}
 \hspace{\fill}
@@ -304,7 +329,7 @@ The impact of the input sequence length can be seen in \ref{fig:seq_len_regressi
 \hspace{\fill}
    \subfloat[15\% alteration\label{fig:results_multiclass_qualitative_15}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/average/multiclass_qualitative_average_ratio_0.15.png}}\\
-\caption{\label{fig:results_multiclass_qualitative}Altering log events at different ratios, using classification, 5\% anomaly.}
+\caption{\label{fig:results_multiclass_qualitative}Altering log events at different ratios, using classification.}
 \end{figure*}
 
 % multiclass sequence length
@@ -327,7 +352,7 @@ The impact of the input sequence length can be seen in \ref{fig:seq_len_regressi
 
 \subsection{Transfer learning using the regression-based approach \label{sec:results-regression-transfer}}
 
-As described in \ref{sec:transfer_learning_setup}, the alterations that were injected separately in the experiments on one dataset in the last section, are now injected all at once, to simulate a different dataset. Figure \ref{fig:results_transfer_regression} shows the results for alterations on 5\%, 10\% and 15\% of the log lines of all possible alterations at the same time, after 60 epochs of training on dataset A and 5 epochs of training on dataset B. It is clearly visible, that Bert and XL-Transformers are both degrading substantially in all metrics, yet GPT-2 achieves good results even with an increased alteration ratio.
+As described in \ref{sec:transfer_learning_setup}, the alterations that were injected separately in the experiments on one dataset in the last section, are now injected all at once, in order to simulate a different dataset B. Figure \ref{fig:results_transfer_regression} shows the results for alterations on 5\%, 10\% and 15\% of the log lines of all possible alterations at the same time, after 60 epochs of training on the train dataset A and 5 epochs of training on the train dataset B. It is clearly visible, that Bert and XL-Transformers are both degrading substantially in all metrics, yet GPT-2 achieves good results even with an increased alteration ratio.
 
 \begin{comment}
 \begin{figure}[h]
@@ -339,6 +364,8 @@ As described in \ref{sec:transfer_learning_setup}, the alterations that were inj
 \end{comment}
 
 \begin{figure*}[ht!]
+  \centering
+  \captionsetup{justification=centering}
    \subfloat[5\% alteration\label{fig:results_transfer_regression_0.05}]{%
       \includegraphics[trim={1cm 0.5cm 0cm 1cm}, width=0.322\textwidth]{results/transfer/transfer_regression_0.05_ratio.png}}
 \hspace{\fill}
@@ -383,8 +410,8 @@ Figure \ref{fig:results_transfer_regression_per_epoch} depicts the development o
 %%%% TRANSFER LEARNING CLASSIFICATION
 \subsection{Transfer learning using the classification-based approach \label{sec:results-classification-transfer}}
 
-For transfer learning using the classification-based approach, the same experiments as described in \ref{sec:results-regression-transfer} were conducted. Figure \ref{fig:results_transfer_classification} shows the results of the transfer learning experiment. Interesting observations include the stable results achieved using Bert, which are little sensitive to increasing alteration ratios and the results of GPT-2, which are not as useful as compared to the regression-based approach.
-Figure \ref{fig:results_transfer_multiclass_per_epoch} depicts the development of the metrics of detecting anomalies for every additional epoch of training on dataset B. Bert improves the most per epoch, ramping up steeply after epoch 5 is completed, GPT-2 stays almost the same and XL-Transformers has small improvements over the course of the 5 epochs. These findings are confirmed by the ROC curve plots which can be seen in figure \ref{fig:results_transfer_multiclass_roc}, showing very good results for Bert, acceptable results for Xl-Transformers and far less satisfying results for GPT-2.
+For transfer learning using the classification-based approach, the same experiments as described in \ref{sec:results-regression-transfer} were conducted. Figure \ref{fig:results_transfer_classification} shows the results of the transfer learning experiment. Interesting observations include the stable results achieved using Bert, which are little sensitive to increasing alteration ratios. Bert achieves a F-1 score of 0.82 for 5\% alterations, 0.77 for 10\% alterations and 0.81 for 15\% alterations, proving that Bert has clear advantages over GPT-2 and XL-Transformers for the classification-based approach and the results of GPT-2, which are not as good as compared to the regression-based approach. It is noticeable, that all language models achieve a recall value of 1.0.
+Figure \ref{fig:results_transfer_multiclass_per_epoch} depicts the development of the metrics of detecting anomalies for every additional epoch of training on dataset B. After every epoch of training on the train dataset B, the labelled test dataset B is fed into the model, and metrics are collected. Bert improves the most per epoch, ramping up steeply in accuracy and especially for F-1 score and precision between epoch four and five. GPT-2 shows almost no improvements, with F1, precision and accuracy and XL-Transformers has small improvements over the course of the 5 epochs. These findings are confirmed by the ROC curve plots which can be seen in figure \ref{fig:results_transfer_multiclass_roc}, showing very good results for Bert, acceptable results for Xl-Transformers and far less satisfying results for GPT-2.
 
 %\begin{figure}[h]
 %  \centering
@@ -441,7 +468,7 @@ For anomaly detection on one dataset using the regression approach, GPT-2 shows 
 
 For the regression approach on one dataset, GPT-2 beats Bert and XL-Transformers clearly with regards to all metrics.
 
-For the classification approach on one dataset on the other hand, GPT-2   shows weaker results than XL-Transformers and Bert. This is probably party due to the small cosine distance between the embeddings of the templates, where small changes on the templates can have a high impact already.
+For the classification approach on one dataset on the other hand, GPT-2 shows weaker results than XL-Transformers and Bert. This is probably party due to the small cosine distance between the embeddings of the templates, where small changes on the templates can have a high impact already.
 
 For the transfer learning approach, the results show a slightly different picture. Using the regression approach, GPT-2 is still ahead of the other two, while Bert seems to show better results than for detection on one dataset. 
 
