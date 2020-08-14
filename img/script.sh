@@ -1,4 +1,4 @@
 #!/bin/bash
-for FILE in ./*.pdf; do
-  pdfcrop "${FILE}"
+for FILE in ./*.png; do
+  convert -trim "${FILE}" "${FILE}"
 done

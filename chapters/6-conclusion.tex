@@ -10,7 +10,9 @@ The work done can be summarised by the following steps:
 \begin{itemize}
 		\item Finding a suitable log parser by evaluating the available log parsers on their performance on the log dataset.
 		\item Finding suitable language models in order to represent log templates so that they can be used for the task of anomaly detection
-		\item Finding a means to alter log datasets in such a way that the existence of a different log dataset and the evolution of log data can be simulated in oder to evaluate the performance of the transfer learning method.
+		\item Finding a suitable neural network design for anomaly detection.
+		\item Implementing the regression-based and classification-based methods for anomaly detection.
+		\item Finding a means to alter log datasets in such a way that the existence of a different log dataset and the evolution of log data can be simulated in oder to evaluate the performance of the transfer of knowledge method.
 		\item Evaluation of the proposed model by comparing the quality of word embeddings obtained by different pre-trained language models with regards to the task of anomaly detection in system logs.
 \end{itemize}
 
@@ -18,7 +20,7 @@ The work done can be summarised by the following steps:
 \section{Problems Encountered\label{sec:problems}}
 Several impediments occurred during the development of the model. 
 
-At the beginning, it was not obvious, which word embeddings to use in order to represent log events. First attempts were made with GloVe, using word vectors that were trained only the available small log corpus, since the publicly available pre-trained vectors did not have representations for log-domain-specific words like "MB", "GB", "deallocate", "VM". These representations of log events of unequal length were padded with zeros and fed into an Auto Encoder, in order to learn the sentence representations. Then, the latent space representation of every log event was used in order to obtain representations of equal length. This attempt yielded acceptable results on the easiest case of injecting anomalies without alterations, but were disappointing when injecting alterations, making it unfit for the transfer approach. This was unfortunate, since a lot of time was invested into this approach. Using more sophisticated language models like Bert delivered better results overall.
+At the beginning, it was not obvious, which word embeddings to use in order to represent log events. First attempts were made with GloVe, using word vectors that were trained only the available small log corpus, since the publicly available pre-trained vectors did not have representations for log-domain-specific words like "MB", "GB", "deallocate", "VM". These representations of log events of unequal length were padded with zeros and fed into an Auto Encoder, in order to learn the sentence representations. Then, the latent space representation of every log event was used in order to obtain representations of equal length. This attempt yielded acceptable results on the easiest case of injecting anomalies without alterations, but were disappointing when injecting alterations, making it unfit for the transfer of knowledge. This was unfortunate, since a lot of time was invested into this approach. Using more sophisticated language models like Bert delivered better results overall.
 
 Finding appropriate hyperparameters for the model, for example sequence length, number of hidden units and number of layers for the LSTM or clipping, was not easy in the beginning, since all of them heavily influence the end result if not set correctly. A lot of development time was invested, trying to find the reasons for problems elsewhere, when the only problem was for example a wrongly chosen value for gradient clipping.
 
@@ -27,11 +29,11 @@ In this section, possible improvements for the model are identified.
 
 In order to have more ways of evaluating different language models, next to the regression and classification approach, a binary classification approach can be implemented.
 
-The word embeddings are taken from the used language models as they are. Finetuning on the log corpora is only conducted using the default tasks that have been used to train the language model on extremely large corpora. The corpora on log data are likely to be too small. Even though most log events are sentences in English, they use very reduced idioms. A deeper investigation on how to train the language model specifically on the task of anomaly detection could potentially be useful in order to obtain better results.
+The word embeddings are taken from the used language models as they are. Finetuning on the log corpora is only conducted using the default tasks that have been used to train the language model on large corpora. The corpora on log data are likely to be too small. Even though most log events are sentences in English, they use very reduced idioms. A deeper investigation on how to train the language model specifically on the task of anomaly detection could potentially be useful in order to obtain better results.
 
 A very important step in order to make the proposed model even more robust, resilient and most importantly able to transfer knowledge on new datasets, evaluation into finding a proper attention mechanism, as described by Vaswani et al. \cite{vaswani2017attention}, that fits the use-case correctly and enhances it. The mentioned papers in \ref{cha:related_work} have proven that using an attention mechanism in combination with a LSTM can highly improve the results obtained from the model.
 
-Fine-tuning a pre-trained language model explicitly on the task of anomaly detection by integrating the fine-tuning step into the model's pipeline, can potentially improve the quality of the word embeddings. This can especially be useful for the transfer learning task.
+Fine-tuning a pre-trained language model explicitly on the task of anomaly detection by integrating the fine-tuning step into the model's pipeline, can potentially improve the quality of the word embeddings. This can be especially useful for the transfer of knowledge task.
 
 
 
