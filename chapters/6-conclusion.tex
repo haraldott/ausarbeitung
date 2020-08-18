@@ -3,8 +3,7 @@
 
 
 \section{Summary\label{sec:summary}}
-
-Finding suitable representations for log data in the form of word embeddings is an important step towards building a robust, environment-agnostic anomaly detection model. This work presents an evaluation of three different word embedding models, namely Bert, GPT-2 and XL-Transformers and compares them using a regression-based and a classification-based approach. Additionally, in order to evaluate the robustness of the model, different alterations are injected into the logs. These alterations are finally combined together, to simulate the existence of a different log dataset B and the portability of obtained knowledge from training on a log dataset A.
+This work addresses to the problem of anomaly detection using system logs in large-scale distributed systems, thus making an essential contribution to improving the reliability and the security of a distributed system. Finding suitable representations for log data in the form of word embeddings is an important step towards building a robust, environment-agnostic anomaly detection model. In this work, three different language models, namely Bert, GPT-2 and XL-Transformers are compared and used with regression-based and a classification-based approach for anomaly detection. Additionally, the language models are evaluated with regards to their robustness to small permutations in the normal trace of logs, a scenario often occurring in practice due to caching, hardware problems and transmission delays. Finally, an evaluation is conducted with regards to the possibility of transferring obtained knowledge from a dataset to a different one, by combining different degrees of alterations in order to simulate another dataset.
 
 The work done can be summarised by the following steps:
 \begin{itemize}
@@ -17,17 +16,17 @@ The work done can be summarised by the following steps:
 \end{itemize}
 
 
-\section{Problems Encountered\label{sec:problems}}
-Several impediments occurred during the development of the model. 
+%\section{Problems Encountered\label{sec:problems}}
+%Several impediments occurred during the development of the model. 
 
-At the beginning, it was not obvious, which word embeddings to use in order to represent log events. First attempts were made with GloVe, using word vectors that were trained only the available small log corpus, since the publicly available pre-trained vectors did not have representations for log-domain-specific words like "MB", "GB", "deallocate", "VM". These representations of log events of unequal length were padded with zeros and fed into an Auto Encoder, in order to learn the sentence representations. Then, the latent space representation of every log event was used in order to obtain representations of equal length. This attempt yielded acceptable results on the easiest case of injecting anomalies without alterations, but were disappointing when injecting alterations, making it unfit for the transfer of knowledge. This was unfortunate, since a lot of time was invested into this approach. Using more sophisticated language models like Bert delivered better results overall.
+%At the beginning, it was not obvious, which word embeddings to use in order to represent log events. First attempts were made with GloVe, using word vectors that were trained only the available small log corpus, since the publicly available pre-trained vectors did not have representations for log-domain-specific words like "MB", "GB", "deallocate", "VM". These representations of log events of unequal length were padded with zeros and fed into an Auto Encoder, in order to learn the sentence representations. Then, the latent space representation of every log event was used in order to obtain representations of equal length. This attempt yielded acceptable results on the easiest case of injecting anomalies without alterations, but were disappointing when injecting alterations, making it unfit for the transfer of knowledge. This was unfortunate, since a lot of time was invested into this approach. Using more sophisticated language models like Bert delivered better results overall.
 
-Finding appropriate hyperparameters for the model, for example sequence length, number of hidden units and number of layers for the LSTM or clipping, was not easy in the beginning, since all of them heavily influence the end result if not set correctly. A lot of development time was invested, trying to find the reasons for problems elsewhere, when the only problem was for example a wrongly chosen value for gradient clipping.
+%Finding appropriate hyperparameters for the model, for example sequence length, number of hidden units and number of layers for the LSTM or clipping, was not easy in the beginning, since all of them heavily influence the end result if not set correctly. A lot of development time was invested, trying to find the reasons for problems elsewhere, when the only problem was for example a wrongly chosen value for gradient clipping.
 
 \section{Outlook\label{sec:outlook}}
 In this section, possible improvements for the model are identified. 
 
-In order to have more ways of evaluating different language models, next to the regression and classification approach, a binary classification approach can be implemented.
+In order to have more means to evaluate different language models, next to the regression and classification approach, a binary classification approach can be implemented.
 
 The word embeddings are taken from the used language models as they are. Finetuning on the log corpora is only conducted using the default tasks that have been used to train the language model on large corpora. The corpora on log data are likely to be too small. Even though most log events are sentences in English, they use very reduced idioms. A deeper investigation on how to train the language model specifically on the task of anomaly detection could potentially be useful in order to obtain better results.
 
